@@ -6,6 +6,7 @@
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4?style=flat-square&logo=windows)](https://github.com/arqam66/screen_recoder/releases)
 [![Electron](https://img.shields.io/badge/Electron-31.7.7-47848F?style=flat-square&logo=electron)](https://www.electronjs.org/)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20Online-ff6b6b?style=flat-square&logo=googlechrome&logoColor=white)](https://screen-recoder-coral.vercel.app/)
 
 ---
 
@@ -17,6 +18,12 @@
 | [**Screen-Recorder-1.2.0-portable.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.2.0/Screen-Recorder-1.2.0-portable.exe) | Portable — run directly, no installation needed |
 
 **Requirements:** Windows 10 or 11 (64-bit)
+
+### 🌐 Try Online
+
+No download required — launch the app directly in your browser:
+
+**[→ Open Screen Recorder in Browser](https://screen-recoder-coral.vercel.app/)**
 
 ---
 
