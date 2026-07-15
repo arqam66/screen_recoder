@@ -13,6 +13,9 @@
     "appId": "com.screenrecorder",
     "productName": "Screen Recorder",
     "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "release"
+    },
     "files": [
       "index.html",
       "main.js",
