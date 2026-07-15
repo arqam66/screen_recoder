@@ -1004,6 +1004,9 @@ let stopCount = 0;
 let screenStream = null, camStream = null;
 let sysAudioStream = null, micStream = null;
 let audioCtx = null, gainNode = null, analyser = null;
+let audioDestNode = null;
+let audioSourceNodes = [];
+let audioSourceStreams = [];
 let drawVid = null, camVid = null, drawInterval = null;
 let timerIntvl = null, elapsedSec = 0;
 let meterRaf = null;
@@ -1219,6 +1222,7 @@ async function setupAudioMixer(sysStream, enableMic, existingMicStream = null){
     if(audioCtx.state === 'suspended') await audioCtx.resume();
 
     const dest = audioCtx.createMediaStreamDestination();
+    audioDestNode = dest;
     analyser  = audioCtx.createAnalyser();
     analyser.fftSize = 256;
     gainNode  = audioCtx.createGain();
@@ -1227,7 +1231,9 @@ async function setupAudioMixer(sysStream, enableMic, existingMicStream = null){
     // System audio source (WASAPI loopback from display stream)
     if(sysTrack){
       const sysOnly = new MediaStream([sysTrack]);
+      audioSourceStreams.push(sysOnly);
       const sysSrc  = audioCtx.createMediaStreamSource(sysOnly);
+      audioSourceNodes.push(sysSrc);
       sysSrc.connect(gainNode);
       gainNode.connect(analyser);
       gainNode.connect(dest);
@@ -1239,8 +1245,11 @@ async function setupAudioMixer(sysStream, enableMic, existingMicStream = null){
     // Microphone source
     if(micTrack){
       const micOnly = new MediaStream([micTrack]);
+      audioSourceStreams.push(micOnly);
       const micSrc  = audioCtx.createMediaStreamSource(micOnly);
+      audioSourceNodes.push(micSrc);
       const micGain = audioCtx.createGain();
+      audioSourceNodes.push(micGain);
       micGain.gain.value = 1.0;
       micSrc.connect(micGain);
       micGain.connect(analyser);
@@ -1879,6 +1888,15 @@ function cleanup(resetUI = true){
   mouseX = 0;
   mouseY = 0;
   mouseOverCanvas = false;
+  audioSourceNodes.forEach(node => {
+    try { node.disconnect(); } catch (e) {}
+  });
+  audioSourceNodes = [];
+  audioSourceStreams = [];
+  if (audioDestNode) {
+    try { audioDestNode.disconnect(); } catch (e) {}
+    audioDestNode = null;
+  }
   if(audioCtx){ audioCtx.close(); audioCtx = null; }
   gainNode = null; analyser = null;
   [screenStream, camStream, sysAudioStream, micStream].forEach(s => s?.getTracks().forEach(t => t.stop()));
