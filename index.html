@@ -989,17 +989,10 @@ instrEl.innerHTML = INSTRS.screen;
 instrEl.style.display = 'block';
 
 
-// ── MP4 support detection ─────────────────────────────────────────────────────
-const MP4_MIME = [
-  'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
-  'video/mp4;codecs=h264,aac',
-  'video/mp4',
-].find(t => MediaRecorder.isTypeSupported(t)) || null;
-
 // ── State ─────────────────────────────────────────────────────────────────────
-let recWebm = null, chunksWebm = [];
-let recMp4  = null, chunksMp4  = [];
-let blobWebm= null, blobMp4    = null;
+let recorder = null, chunks = [];
+let recordedBlob = null, blobWebm = null, blobMp4 = null;
+let recWebm = null, recMp4 = null;
 let stopCount = 0;
 let screenStream = null, camStream = null;
 let sysAudioStream = null, micStream = null;
@@ -1339,42 +1332,50 @@ function drawCamOverlay(cv){
 
 const TARGET_FPS = 30;
 const FRAME_MS   = 1000 / TARGET_FPS;
+let drawRaf = null, drawInterval = null;
 
 function startDraw(sv, cv){
   drawVid = sv; camVid = cv;
-  let last = 0;
-  function frame(ts){
+  function render(){
     if(!drawVid) return;
-    if(ts - last >= FRAME_MS){
-      last = ts;
-      try{
-        ctx.drawImage(drawVid, 0, 0, composite.width, composite.height);
-        drawCamOverlay(camVid);
-        
-        if (drawingCanvas) {
-          ctx.drawImage(drawingCanvas, 0, 0);
-        }
+    try{
+      ctx.drawImage(drawVid, 0, 0, composite.width, composite.height);
+      drawCamOverlay(camVid);
+      
+      if (drawingCanvas) {
+        ctx.drawImage(drawingCanvas, 0, 0);
+      }
 
-        if (drawMode === 'laser' && mouseOverCanvas) {
-          ctx.save();
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = '#ff3b30';
-          ctx.fillStyle = '#ff3b30';
-          ctx.beginPath();
-          ctx.arc(mouseX, mouseY, 8, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-      }catch(_){}
-    }
+      if (drawMode === 'laser' && mouseOverCanvas) {
+        ctx.save();
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ff3b30';
+        ctx.fillStyle = '#ff3b30';
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }catch(_){}
+  }
+
+  function frame(){
+    if(!drawVid) return;
+    render();
     drawRaf = requestAnimationFrame(frame);
   }
   drawRaf = requestAnimationFrame(frame);
+
+  // Fallback interval: requestAnimationFrame is throttled to 0-1 FPS when window/tab is unfocused.
+  // This interval ensures composite canvas continues redrawing non-stop in background windows.
+  if(!drawInterval){
+    drawInterval = setInterval(render, FRAME_MS);
+  }
 }
-let drawRaf = null;
 
 function stopDraw(){
   if(drawRaf != null){ cancelAnimationFrame(drawRaf); drawRaf = null; }
+  if(drawInterval != null){ clearInterval(drawInterval); drawInterval = null; }
   drawVid = null; camVid = null;
 }
 
@@ -1598,6 +1599,54 @@ async function selectSource() {
   });
 }
 
+// ── WebM Duration Fixer ───────────────────────────────────────────────────────
+// Injects exact duration metadata into Matroska Segment Info header
+// so media players (VLC, Chrome, QuickTime, WMP) show full recording time and seek correctly.
+async function fixWebmDuration(rawBlob, durationMs) {
+  if (!rawBlob || durationMs <= 0) return rawBlob;
+  try {
+    const buffer = await rawBlob.arrayBuffer();
+    const view = new DataView(buffer);
+    let infoPos = -1;
+    for (let i = 0; i < view.byteLength - 4; i++) {
+      if (view.getUint32(i) === 0x1549A966) {
+        infoPos = i;
+        break;
+      }
+    }
+    if (infoPos === -1) return rawBlob;
+
+    let durationPos = -1;
+    for (let i = infoPos; i < Math.min(infoPos + 500, view.byteLength - 10); i++) {
+      if (view.getUint16(i) === 0x4489) {
+        durationPos = i;
+        break;
+      }
+    }
+
+    if (durationPos !== -1) {
+      const floatView = new DataView(buffer, durationPos + 3, 8);
+      floatView.setFloat64(0, durationMs, false);
+      return new Blob([buffer], { type: rawBlob.type });
+    } else {
+      const insertPos = infoPos + 5;
+      const durationBytes = new Uint8Array(11);
+      durationBytes[0] = 0x44; durationBytes[1] = 0x89; durationBytes[2] = 0x88;
+      const durDataView = new DataView(durationBytes.buffer, 3, 8);
+      durDataView.setFloat64(0, durationMs, false);
+
+      const newBuffer = new Uint8Array(view.byteLength + 11);
+      newBuffer.set(new Uint8Array(buffer, 0, insertPos), 0);
+      newBuffer.set(durationBytes, insertPos);
+      newBuffer.set(new Uint8Array(buffer, insertPos), insertPos + 11);
+      return new Blob([newBuffer.buffer], { type: rawBlob.type });
+    }
+  } catch (err) {
+    console.warn('fixWebmDuration failed:', err);
+    return rawBlob;
+  }
+}
+
 async function start(){
   if(isRecording) return;
 
@@ -1613,9 +1662,9 @@ async function start(){
     console.error('Failed to init AudioContext:', e);
   }
 
-  chunksWebm = []; chunksMp4 = [];
-  blobWebm = null; blobMp4 = null; stopCount = 0;
-  recWebm = null; recMp4 = null;
+  chunks = [];
+  recordedBlob = blobWebm = blobMp4 = null;
+  recorder = recWebm = recMp4 = null;
   screenStream = camStream = sysAudioStream = gainNode = analyser = null;
   drawVid = null; camVid = null;
 
@@ -1649,9 +1698,9 @@ async function start(){
             mandatory: {
               chromeMediaSource: 'desktop',
               chromeMediaSourceId: sourceId,
-              maxWidth: 1920,
-              maxHeight: 1080,
-              maxFrameRate: 30
+              maxWidth: 3840,
+              maxHeight: 2160,
+              maxFrameRate: 60
             }
           },
           audio: wantSysAudio ? {
@@ -1710,9 +1759,9 @@ async function start(){
             mandatory: {
               chromeMediaSource: 'desktop',
               chromeMediaSourceId: sourceId,
-              maxWidth: 1920,
-              maxHeight: 1080,
-              maxFrameRate: 30
+              maxWidth: 3840,
+              maxHeight: 2160,
+              maxFrameRate: 60
             }
           },
           audio: wantSysAudio ? {
@@ -1764,6 +1813,13 @@ async function start(){
     if(!videoTrack) throw new Error('No video track available');
     recAudioTrack = audioTrack || null;
 
+    // Attach track onended listener so recording cleanly stops when user stops sharing via OS/browser UI
+    videoTrack.onended = () => {
+      if (isRecording) {
+        stop();
+      }
+    };
+
     // Audio check and feedback
     const wantAnyAudio = wantSysAudio || micToggle.checked;
     if (wantAnyAudio && !recAudioTrack) {
@@ -1781,22 +1837,23 @@ async function start(){
       throw e;
     }
 
-    const expectedStops = MP4_MIME ? 2 : 1;
-    const handleStop = () => { stopCount++; if(stopCount >= expectedStops) onStop(); };
-
-    recWebm = new MediaRecorder(recStream, { mimeType:'video/webm;codecs=vp8,opus', videoBitsPerSecond:bitrate });
-    recWebm.ondataavailable = e => { if(e.data?.size > 0) chunksWebm.push(e.data); };
-    recWebm.onstop = handleStop;
-    recWebm.onerror = () => { setStatus('WebM error'); cleanup(); };
-    recWebm.start(100);
-
-    if(MP4_MIME){
-      recMp4 = new MediaRecorder(recStream, { mimeType:MP4_MIME, videoBitsPerSecond:bitrate });
-      recMp4.ondataavailable = e => { if(e.data?.size > 0) chunksMp4.push(e.data); };
-      recMp4.onstop = handleStop;
-      recMp4.onerror = () => { setStatus('MP4 error'); cleanup(); };
-      recMp4.start(100);
+    // Single robust MediaRecorder instance (prevents CPU starvation, memory bloat, and dual-recorder deadlocks)
+    const options = { videoBitsPerSecond: bitrate };
+    if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+      options.mimeType = 'video/webm;codecs=vp8,opus';
+    } else if (MediaRecorder.isTypeSupported('video/webm')) {
+      options.mimeType = 'video/webm';
     }
+
+    recorder = new MediaRecorder(recStream, options);
+    recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+    recorder.onstop = onStop;
+    recorder.onerror = (e) => {
+      console.error('MediaRecorder error:', e);
+      setStatus('Recording error');
+      if (isRecording) stop();
+    };
+    recorder.start(1000); // 1-second chunks for low memory overhead on long recordings
 
     isRecording = true;
     startTimer(); startMeter();
@@ -1814,8 +1871,8 @@ async function start(){
 }
 
 function pause(){
-  if(recWebm?.state === 'recording'){
-    recWebm.pause(); recMp4?.pause();
+  if(recorder?.state === 'recording'){
+    recorder.pause();
     setStatus('Paused');
     clearInterval(timerIntvl);
     pauseBtn.disabled  = true;
@@ -1825,8 +1882,8 @@ function pause(){
 }
 
 function resume(){
-  if(recWebm?.state === 'paused'){
-    recWebm.resume(); recMp4?.resume();
+  if(recorder?.state === 'paused'){
+    recorder.resume();
     setStatus('Recording…');
     timerIntvl = setInterval(() => { elapsedSec++; timerEl.textContent = fmtTime(elapsedSec); }, 1000);
     resumeBtn.disabled = true;
@@ -1836,17 +1893,23 @@ function resume(){
 }
 
 function stop(){
-  if(recWebm) recWebm.stop();
-  if(recMp4)  recMp4.stop();
+  if(recorder && recorder.state !== 'inactive'){
+    recorder.stop();
+  }
 }
 
-function onStop(){
+async function onStop(){
   const duration = elapsedSec;
   stopTimer(); stopMeter(); updateSysAudioBadge(false);
   isRecording = false;
 
-  blobWebm = new Blob(chunksWebm, {type:'video/webm'});
-  blobMp4  = chunksMp4.length ? new Blob(chunksMp4, {type:'video/mp4'}) : null;
+  const mime = recorder?.mimeType || 'video/webm';
+  const rawBlob = new Blob(chunks, { type: mime });
+  
+  // Inject exact duration metadata (in ms) so video players render full screen time and allow seeking
+  recordedBlob = await fixWebmDuration(rawBlob, (duration || 1) * 1000);
+  blobWebm = recordedBlob;
+  blobMp4  = recordedBlob;
 
   // Filename template
   const template = filenameTemplate.value || 'recording-{date}-{time}';
@@ -1854,23 +1917,21 @@ function onStop(){
   saveFilename.value = fn;
 
   $('fmtWebm').style.display = 'inline';
-  $('fmtMp4').style.display  = blobMp4 ? 'inline' : 'none';
-  $('recSize').textContent = blobMp4
-    ? `WebM ${fmtSize(blobWebm.size)} · MP4 ${fmtSize(blobMp4.size)}`
-    : fmtSize(blobWebm.size);
+  $('fmtMp4').style.display  = 'inline';
+  $('recSize').textContent = fmtSize(recordedBlob.size);
 
-  dlMp4Btn.disabled = !blobMp4;
-  $('mp4Unavail').style.display = blobMp4 ? 'none' : 'block';
+  dlMp4Btn.disabled = false;
+  $('mp4Unavail').style.display = 'none';
 
-  previewVid.src = URL.createObjectURL(blobWebm);
+  previewVid.src = URL.createObjectURL(recordedBlob);
   previewModal.style.display = 'flex';
 
-  // Add to history immediately with WebM blob
+  // Add to history immediately
   addHistoryEntry({
-    blob: blobWebm,
+    blob: recordedBlob,
     filename: fn + '.webm',
     duration,
-    size: blobWebm.size,
+    size: recordedBlob.size,
     mode: currentMode
   });
 
@@ -1941,15 +2002,17 @@ async function saveAs(blob, suggestedName){
 
 // ── Modal actions ─────────────────────────────────────────────────────────────
 dlWebmBtn.addEventListener('click', async () => {
-  if(!blobWebm) return;
-  const fn = (saveFilename.value || expandFilename(filenameTemplate.value, currentMode)).replace(/\.webm$/i,'') + '.webm';
-  await saveAs(blobWebm, fn);
+  const targetBlob = recordedBlob || blobWebm;
+  if(!targetBlob) return;
+  const baseFn = (saveFilename.value || expandFilename(filenameTemplate.value, currentMode)).replace(/\.(webm|mp4)$/i,'');
+  await saveAs(targetBlob, baseFn + '.webm');
   closePreview();
 });
 dlMp4Btn.addEventListener('click', async () => {
-  if(!blobMp4) return;
-  const fn = (saveFilename.value || expandFilename(filenameTemplate.value, currentMode)).replace(/\.mp4$/i,'') + '.mp4';
-  await saveAs(blobMp4, fn);
+  const targetBlob = recordedBlob || blobMp4 || blobWebm;
+  if(!targetBlob) return;
+  const baseFn = (saveFilename.value || expandFilename(filenameTemplate.value, currentMode)).replace(/\.(webm|mp4)$/i,'');
+  await saveAs(targetBlob, baseFn + '.mp4');
   closePreview();
 });
 discardBtn.addEventListener('click', () => {

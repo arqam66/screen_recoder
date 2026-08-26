@@ -149,31 +149,47 @@ function drawCam(camVid){
   else ctx.roundRect(x,y,w,h,8);
   ctx.stroke();
 }
+let drawInterval = null;
 function startDraw(sv, cv){
   drawVid = sv;
+  const render = () => {
+    if (!drawVid) return;
+    try {
+      ctx.drawImage(sv, 0, 0, canvas.width, canvas.height);
+      drawCam(cv);
+
+      if (drawingCanvas) {
+        ctx.drawImage(drawingCanvas, 0, 0);
+      }
+
+      if (drawMode === 'laser' && mouseOverCanvas) {
+        ctx.save();
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ff3b30';
+        ctx.fillStyle = '#ff3b30';
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    } catch (_) {}
+  };
+
   const frame = () => {
     if (!drawVid) return;
-    ctx.drawImage(sv, 0, 0, canvas.width, canvas.height);
-    drawCam(cv);
-
-    if (drawingCanvas) {
-      ctx.drawImage(drawingCanvas, 0, 0);
+    render();
+    if ('requestVideoFrameCallback' in sv) {
+      vfcId = sv.requestVideoFrameCallback(frame);
     }
-
-    if (drawMode === 'laser' && mouseOverCanvas) {
-      ctx.save();
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = '#ff3b30';
-      ctx.fillStyle = '#ff3b30';
-      ctx.beginPath();
-      ctx.arc(mouseX, mouseY, 8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    vfcId = sv.requestVideoFrameCallback(frame);
   };
-  vfcId = sv.requestVideoFrameCallback(frame);
+
+  if ('requestVideoFrameCallback' in sv) {
+    vfcId = sv.requestVideoFrameCallback(frame);
+  }
+
+  if (!drawInterval) {
+    drawInterval = setInterval(render, 1000 / 30);
+  }
 }
 
 // ── Screenshot ────────────────────────────────────────────────────────
@@ -301,13 +317,20 @@ async function start(){
       at = mixAudio(screenStream, camStream);
     }
 
+    if (vt) {
+      vt.onended = () => {
+        if (recorder && recorder.state !== 'inactive') stop();
+      };
+    }
+
     const recStream = new MediaStream([vt,at].filter(Boolean));
     await countdown(3);
 
     recorder = new MediaRecorder(recStream,{mimeType:'video/webm;codecs=vp8,opus',videoBitsPerSecond:bitrate});
     recorder.ondataavailable = e=>{ if(e.data?.size>0) chunks.push(e.data); };
     recorder.onstop = onStop;
-    recorder.start(100);
+    recorder.onerror = () => { if (recorder && recorder.state !== 'inactive') stop(); };
+    recorder.start(1000);
 
     startTimer(); startMeter();
     setStatus('Recording… switch to your tab freely');
@@ -336,18 +359,56 @@ function resume(){
     dot.style.animationPlayState='running';
   }
 }
-function stop(){ recorder?.stop(); }
+function stop(){ if (recorder && recorder.state !== 'inactive') recorder.stop(); }
 
-function onStop(){
+async function fixWebmDuration(rawBlob, durationMs) {
+  if (!rawBlob || durationMs <= 0) return rawBlob;
+  try {
+    const buffer = await rawBlob.arrayBuffer();
+    const view = new DataView(buffer);
+    let infoPos = -1;
+    for (let i = 0; i < view.byteLength - 4; i++) {
+      if (view.getUint32(i) === 0x1549A966) { infoPos = i; break; }
+    }
+    if (infoPos === -1) return rawBlob;
+    let durationPos = -1;
+    for (let i = infoPos; i < Math.min(infoPos + 500, view.byteLength - 10); i++) {
+      if (view.getUint16(i) === 0x4489) { durationPos = i; break; }
+    }
+    if (durationPos !== -1) {
+      const floatView = new DataView(buffer, durationPos + 3, 8);
+      floatView.setFloat64(0, durationMs, false);
+      return new Blob([buffer], { type: rawBlob.type });
+    } else {
+      const insertPos = infoPos + 5;
+      const durationBytes = new Uint8Array(11);
+      durationBytes[0] = 0x44; durationBytes[1] = 0x89; durationBytes[2] = 0x88;
+      const durDataView = new DataView(durationBytes.buffer, 3, 8);
+      durDataView.setFloat64(0, durationMs, false);
+      const newBuffer = new Uint8Array(view.byteLength + 11);
+      newBuffer.set(new Uint8Array(buffer, 0, insertPos), 0);
+      newBuffer.set(durationBytes, insertPos);
+      newBuffer.set(new Uint8Array(buffer, insertPos), insertPos + 11);
+      return new Blob([newBuffer.buffer], { type: rawBlob.type });
+    }
+  } catch (err) {
+    return rawBlob;
+  }
+}
+
+async function onStop(){
+  const dur = elapsedSec;
   stopTimer(); stopMeter();
-  savedBlob = new Blob(chunks,{type:'video/webm'});
+  const rawBlob = new Blob(chunks,{type:'video/webm'});
+  savedBlob = await fixWebmDuration(rawBlob, (dur || 1) * 1000);
   pvid.src = URL.createObjectURL(savedBlob);
   pm.style.display='flex';
   cleanup(false);
 }
 
 function cleanup(resetUI=true){
-  if(vfcId!==null&&drawVid) drawVid.cancelVideoFrameCallback(vfcId);
+  if(vfcId!==null&&drawVid&& 'cancelVideoFrameCallback' in drawVid) drawVid.cancelVideoFrameCallback(vfcId);
+  if(drawInterval!==null){ clearInterval(drawInterval); drawInterval=null; }
   vfcId=null; drawVid=null;
   if(drawingCtx) drawingCtx.clearRect(0,0,canvas.width,canvas.height);
   drawingCanvas = null; drawingCtx = null;
