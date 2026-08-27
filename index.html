@@ -647,12 +647,20 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       </div>
       <div class="accordion-body">
         <div class="field">
+          <label class="field-label">Frame Rate</label>
+          <select id="fpsSelect" title="Recording Frame Rate">
+            <option value="60" selected>60 FPS (Ultra Smooth / Fast Motion)</option>
+            <option value="30">30 FPS (Standard)</option>
+          </select>
+        </div>
+        <div class="field">
           <label class="field-label">Quality</label>
           <select id="qualitySelect" title="Quality Preset">
-            <option value="8000000">Ultra (8 Mbps)</option>
-            <option value="4000000" selected>High (4 Mbps)</option>
-            <option value="2000000">Medium (2 Mbps)</option>
-            <option value="1000000">Low (1 Mbps)</option>
+            <option value="20000000">Ultra (20 Mbps / 4K)</option>
+            <option value="12000000" selected>High (12 Mbps / Fast Motion)</option>
+            <option value="8000000">Full HD Standard (8 Mbps)</option>
+            <option value="4000000">Balanced (4 Mbps)</option>
+            <option value="2000000">Low / Compact (2 Mbps)</option>
           </select>
         </div>
         <div class="field opt-hidden" id="opt-campos">
@@ -975,7 +983,9 @@ document.querySelectorAll('.mode-card').forEach(card => {
   card.addEventListener('click', () => {
     document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
     card.classList.add('active');
-    const m = card.querySelector('input').value;
+    const input = card.querySelector('input');
+    if (input) input.checked = true;
+    const m = input ? input.value : 'screen';
     instrEl.innerHTML = INSTRS[m] || '';
     instrEl.style.display = INSTRS[m] ? 'block' : 'none';
     const isBoth = m === 'both';
@@ -1088,8 +1098,14 @@ $('resetHotkeysBtn').addEventListener('click', () => {
 function setStatus(s){ statusEl.textContent = s; }
 
 function fmtTime(s){
-  const m = String(Math.floor(s/60)).padStart(2,'0');
-  return `${m}:${String(s%60).padStart(2,'0')}`;
+  s = Math.max(0, Math.floor(s || 0));
+  const hrs = Math.floor(s / 3600);
+  const mins = Math.floor((s % 3600) / 60);
+  const secs = s % 60;
+  if (hrs > 0) {
+    return `${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+  }
+  return `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
 }
 
 function startTimer(){
@@ -1330,12 +1346,21 @@ function drawCamOverlay(cv){
   ctx.stroke();
 }
 
-const TARGET_FPS = 30;
-const FRAME_MS   = 1000 / TARGET_FPS;
-let drawRaf = null, drawInterval = null;
+let TARGET_FPS = 60;
+let FRAME_MS   = 1000 / TARGET_FPS;
+let drawRaf = null;
 
-function startDraw(sv, cv){
+function startDraw(sv, cv, fps = 60){
   drawVid = sv; camVid = cv;
+  TARGET_FPS = Number(fps) || 60;
+  window.TARGET_FPS = TARGET_FPS;
+  FRAME_MS = 1000 / TARGET_FPS;
+
+  if (ctx.imageSmoothingEnabled !== undefined) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+  }
+
   function render(){
     if(!drawVid) return;
     try{
@@ -1602,11 +1627,14 @@ async function selectSource() {
 // ── WebM Duration Fixer ───────────────────────────────────────────────────────
 // Injects exact duration metadata into Matroska Segment Info header
 // so media players (VLC, Chrome, QuickTime, WMP) show full recording time and seek correctly.
+// Memory-safe: slices only the header buffer (first 128KB) so multi-hour/multi-gigabyte recordings
+// can be patched instantly without risking Out-Of-Memory.
 async function fixWebmDuration(rawBlob, durationMs) {
   if (!rawBlob || durationMs <= 0) return rawBlob;
   try {
-    const buffer = await rawBlob.arrayBuffer();
-    const view = new DataView(buffer);
+    const headerSize = Math.min(rawBlob.size, 131072);
+    const headerBuffer = await rawBlob.slice(0, headerSize).arrayBuffer();
+    const view = new DataView(headerBuffer);
     let infoPos = -1;
     for (let i = 0; i < view.byteLength - 4; i++) {
       if (view.getUint32(i) === 0x1549A966) {
@@ -1625,9 +1653,16 @@ async function fixWebmDuration(rawBlob, durationMs) {
     }
 
     if (durationPos !== -1) {
-      const floatView = new DataView(buffer, durationPos + 3, 8);
-      floatView.setFloat64(0, durationMs, false);
-      return new Blob([buffer], { type: rawBlob.type });
+      const lenByte = view.getUint8(durationPos + 2);
+      if (lenByte === 0x88) { // 8-byte float64
+        const floatView = new DataView(headerBuffer, durationPos + 3, 8);
+        floatView.setFloat64(0, durationMs, false);
+        return new Blob([headerBuffer, rawBlob.slice(headerSize)], { type: rawBlob.type });
+      } else if (lenByte === 0x84) { // 4-byte float32
+        const floatView = new DataView(headerBuffer, durationPos + 3, 4);
+        floatView.setFloat32(0, durationMs, false);
+        return new Blob([headerBuffer, rawBlob.slice(headerSize)], { type: rawBlob.type });
+      }
     } else {
       const insertPos = infoPos + 5;
       const durationBytes = new Uint8Array(11);
@@ -1635,16 +1670,17 @@ async function fixWebmDuration(rawBlob, durationMs) {
       const durDataView = new DataView(durationBytes.buffer, 3, 8);
       durDataView.setFloat64(0, durationMs, false);
 
-      const newBuffer = new Uint8Array(view.byteLength + 11);
-      newBuffer.set(new Uint8Array(buffer, 0, insertPos), 0);
-      newBuffer.set(durationBytes, insertPos);
-      newBuffer.set(new Uint8Array(buffer, insertPos), insertPos + 11);
-      return new Blob([newBuffer.buffer], { type: rawBlob.type });
+      const newHeader = new Uint8Array(headerBuffer.byteLength + 11);
+      newHeader.set(new Uint8Array(headerBuffer, 0, insertPos), 0);
+      newHeader.set(durationBytes, insertPos);
+      newHeader.set(new Uint8Array(headerBuffer, insertPos), insertPos + 11);
+      return new Blob([newHeader.buffer, rawBlob.slice(headerSize)], { type: rawBlob.type });
     }
   } catch (err) {
     console.warn('fixWebmDuration failed:', err);
     return rawBlob;
   }
+  return rawBlob;
 }
 
 async function start(){
@@ -1670,7 +1706,10 @@ async function start(){
 
   const m = getMode();
   currentMode = m;
-  const bitrate = parseInt($('qualitySelect').value);
+  const bitrate = parseInt($('qualitySelect')?.value || '12000000');
+  const targetFps = parseInt($('fpsSelect')?.value || '60');
+  TARGET_FPS = targetFps;
+
   // System audio is always requested for screen/both modes via WASAPI loopback.
   // Camera-only mode has no output device to capture from.
   const wantSysAudio = sysAudioToggle.checked && m !== 'camera';
@@ -1700,7 +1739,7 @@ async function start(){
               chromeMediaSourceId: sourceId,
               maxWidth: 3840,
               maxHeight: 2160,
-              maxFrameRate: 60
+              maxFrameRate: targetFps
             }
           },
           audio: wantSysAudio ? {
@@ -1711,13 +1750,22 @@ async function start(){
         };
         screenStream = await navigator.mediaDevices.getUserMedia(constraints);
       } else {
-        // Standard browser screen capture
+        // Standard browser screen capture with high framerate & motion optimization
         screenStream = await navigator.mediaDevices.getDisplayMedia({
-          video: { cursor: 'always' },
+          video: {
+            cursor: 'always',
+            displaySurface: 'monitor',
+            frameRate: { ideal: targetFps, max: targetFps },
+            width: { ideal: 3840 },
+            height: { ideal: 2160 }
+          },
           audio: wantSysAudio
         });
       }
       videoTrack = screenStream.getVideoTracks()[0];
+      if (videoTrack && 'contentHint' in videoTrack) {
+        videoTrack.contentHint = 'motion';
+      }
       // Use video-only stream for preview — avoids audio-track conflicts with WebAudio
       mainVideo.srcObject = new MediaStream([videoTrack]);
       audioTrack = (wantSysAudio || wantMic) ? await setupAudioMixer(screenStream, wantMic) : null;
@@ -1730,8 +1778,18 @@ async function start(){
     } else if(m === 'camera'){
       // Camera-only: no system audio, but mic can be used
       setStatus('Waiting for camera & mic…');
-      camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: wantMic });
+      camStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          frameRate: { ideal: targetFps, max: targetFps },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        },
+        audio: wantMic
+      });
       videoTrack = camStream.getVideoTracks()[0];
+      if (videoTrack && 'contentHint' in videoTrack) {
+        videoTrack.contentHint = 'motion';
+      }
       audioTrack = wantMic ? await setupAudioMixer(null, true, camStream) : null;
       mainVideo.srcObject = camStream;
       mainVideo.style.display = 'block';
@@ -1761,7 +1819,7 @@ async function start(){
               chromeMediaSourceId: sourceId,
               maxWidth: 3840,
               maxHeight: 2160,
-              maxFrameRate: 60
+              maxFrameRate: targetFps
             }
           },
           audio: wantSysAudio ? {
@@ -1774,13 +1832,23 @@ async function start(){
       } else {
         // Standard browser screen capture
         screenStream = await navigator.mediaDevices.getDisplayMedia({
-          video: { cursor: 'always' },
+          video: {
+            cursor: 'always',
+            displaySurface: 'monitor',
+            frameRate: { ideal: targetFps, max: targetFps },
+            width: { ideal: 3840 },
+            height: { ideal: 2160 }
+          },
           audio: wantSysAudio
         });
       }
       setStatus('Step 2: Allow camera & mic…');
       camStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
+        video: {
+          frameRate: { ideal: targetFps, max: targetFps },
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        },
         audio: wantMic
       });
       setStatus('Building composite…');
@@ -1796,16 +1864,19 @@ async function start(){
       drawingCanvas.height = composite.height;
       drawingCtx = drawingCanvas.getContext('2d');
       
-      startDraw(sv, cv);
+      startDraw(sv, cv, targetFps);
       await new Promise(r => setTimeout(r, 300));
       composite.style.display = 'block';
       mainVideo.style.display = 'none';
       viewLabel.textContent = 'Screen + Camera';
       viewEl.style.display = 'block';
       enableDrawing();
-      const canvasStream = composite.captureStream(TARGET_FPS);
+      const canvasStream = composite.captureStream(targetFps);
       videoTrack = canvasStream.getVideoTracks()[0];
       if(!videoTrack) throw new Error('Canvas capture failed — no video track');
+      if ('contentHint' in videoTrack) {
+        videoTrack.contentHint = 'motion';
+      }
       // System audio comes from the screen share stream + optional mic
       audioTrack = (wantSysAudio || wantMic) ? await setupAudioMixer(screenStream, wantMic, camStream) : null;
     }
@@ -1837,10 +1908,14 @@ async function start(){
       throw e;
     }
 
-    // Single robust MediaRecorder instance (prevents CPU starvation, memory bloat, and dual-recorder deadlocks)
+    // Single robust MediaRecorder instance with optimal codec prioritization
     const options = { videoBitsPerSecond: bitrate };
-    if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+    if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+      options.mimeType = 'video/webm;codecs=vp9,opus';
+    } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
       options.mimeType = 'video/webm;codecs=vp8,opus';
+    } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264,opus')) {
+      options.mimeType = 'video/webm;codecs=h264,opus';
     } else if (MediaRecorder.isTypeSupported('video/webm')) {
       options.mimeType = 'video/webm';
     }
@@ -2068,6 +2143,11 @@ document.addEventListener('keydown', e => {
   if(radio) radio.click();
   setTimeout(() => startBtn.click(), 400);
 })();
+
+// Expose utilities on window for global access and testing
+window.fmtTime = fmtTime;
+window.fixWebmDuration = fixWebmDuration;
+window.TARGET_FPS = TARGET_FPS;
 </script>
 </body>
 </html>
