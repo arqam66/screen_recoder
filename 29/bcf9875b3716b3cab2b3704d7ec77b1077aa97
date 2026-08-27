@@ -1,0 +1,14 @@
+.gitignore
+  h_1191c3f9aa1296 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "29bcf9875b3716b3cab2b3704d7ec77b1077aa97",
+  "prompts": {},
+  "humans": {
+    "h_1191c3f9aa1296": {
+      "author": "Arqam Hussain <arqamtahir125@gmail.com>"
+    }
+  }
+}
