@@ -18,3 +18,4 @@ release/
 .agents/rules/
 .agents/workflows/
 .agents/skills/
+.vscode/private-folder-alias.json
