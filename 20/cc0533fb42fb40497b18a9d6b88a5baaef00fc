@@ -1,0 +1,19 @@
+README.md
+  s_56bfd3cbcb5e32::t_8e5c01f7a4da77 1,17,25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "20cc0533fb42fb40497b18a9d6b88a5baaef00fc",
+  "prompts": {},
+  "sessions": {
+    "s_56bfd3cbcb5e32": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fae5eca1dffeYiK7aPcdQbscbm",
+        "model": "unknown"
+      },
+      "human_author": "Arqam Hussain <arqamtahir125@gmail.com>"
+    }
+  }
+}
