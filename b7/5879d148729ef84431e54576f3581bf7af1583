@@ -1,0 +1,23 @@
+README.md
+  s_56bfd3cbcb5e32::t_da68a43bba1cae 17-18
+  s_56bfd3cbcb5e32::t_8d21ddb99b0a2d 383-384
+  s_56bfd3cbcb5e32::t_97eec59f605dfb 111-112
+package.json
+  s_56bfd3cbcb5e32::t_126b38650b044b 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "b75879d148729ef84431e54576f3581bf7af1583",
+  "prompts": {},
+  "sessions": {
+    "s_56bfd3cbcb5e32": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fae5eca1dffeYiK7aPcdQbscbm",
+        "model": "unknown"
+      },
+      "human_author": "Arqam Hussain <arqamtahir125@gmail.com>"
+    }
+  }
+}
