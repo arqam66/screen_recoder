@@ -14,8 +14,8 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 
 | File | Description |
 |---|---|
-| [**Screen Recorder Setup 1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder.Setup.1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller |
-| [**Screen Recorder 1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder.1.3.0.exe) | Portable — run directly, no installation needed |
+| [**Screen-Recorder-Setup-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen-Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller |
+| [**Screen-Recorder-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen-Recorder-1.3.0.exe) | Portable — run directly, no installation needed |
 
 **Requirements:** Windows 10 or 11 (64-bit)
 
@@ -108,8 +108,8 @@ screen_recorder/
 │   └── icon.ico      # App icon (used in installer & taskbar)
 ├── package.json      # Electron + electron-builder config
 ├── release/          # Build output (gitignored)
-│   ├── Screen Recorder Setup 1.3.0.exe   # NSIS installer
-│   └── Screen Recorder 1.3.0.exe          # Portable exe
+│   ├── Screen-Recorder-Setup-1.3.0.exe  # NSIS installer
+│   └── Screen-Recorder-1.3.0.exe         # Portable exe
 ├── chrome-extension/ # Browser companion extension
 ├── tests/            # Playwright e2e tests
 └── playwright.config.js
@@ -380,7 +380,8 @@ npm run build
 
 | Output | Path |
 |---|---|
-| Portable Exe | `release/Screen Recorder 1.3.0.exe` |
+| Installer | `release/Screen-Recorder-Setup-1.3.0.exe` |
+| Portable Exe | `release/Screen-Recorder-1.3.0.exe` |
 
 ---
 

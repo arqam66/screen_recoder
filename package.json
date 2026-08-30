@@ -12,6 +12,7 @@
   "build": {
     "appId": "com.screenrecorder",
     "productName": "Screen Recorder",
+    "artifactName": "${productName}-${version}.exe",
     "copyright": "Copyright © 2026",
     "directories": {
       "output": "release"
