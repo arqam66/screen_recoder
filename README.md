@@ -1,4 +1,4 @@
-# Screen Recorder
+# Screen Recorder for Windows
 
 A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built with Electron. No uploads, no accounts, no limits.
 
@@ -14,7 +14,7 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 
 | File | Description |
 |---|---|
-| [**Screen Recorder 1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder.1.3.0.exe) | Portable — run directly, no installation needed |
+| [**Portable Executable**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder.1.3.0.exe) | Run directly, no installation needed |
 
 **Requirements:** Windows 10 or 11 (64-bit)
 
@@ -22,7 +22,7 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 
 No download required — launch the app directly in your browser:
 
-**[Open Screen Recorder in Browser](https://screen-recoder-coral.vercel.app/)**
+**[Open in Browser](https://screen-recoder-coral.vercel.app/)**
 
 ---
 
