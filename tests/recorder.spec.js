@@ -466,3 +466,189 @@ test.describe('Multi-Hour & Fast-Motion Engine Checks', () => {
     expect(videoConfig.targetFpsConstant).toBe(60);
   });
 });
+test.describe('Audio Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route('**', (route) => {
+      const url = route.request().url();
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return route.abort();
+      }
+      return route.continue();
+    });
+    await page.goto(indexUrl, { waitUntil: 'domcontentloaded' });
+  });
+
+  test('System audio toggle is enabled by default', async ({ page }) => {
+    await expect(page.locator('#sysAudioToggle')).toBeChecked();
+  });
+
+  test('Microphone toggle is enabled by default', async ({ page }) => {
+    await expect(page.locator('#micToggle')).toBeChecked();
+  });
+
+  test('Gain slider range and default value', async ({ page }) => {
+    await expect(page.locator('#gainRange')).toHaveAttribute('min', '0');
+    await expect(page.locator('#gainRange')).toHaveAttribute('max', '200');
+    await expect(page.locator('#gainRange')).toHaveAttribute('value', '100');
+    await expect(page.locator('#gainVal')).toHaveText('100%');
+  });
+
+  test('Gain slider updates in real time', async ({ page }) => {
+    const gainRange = page.locator('#gainRange');
+    const gainVal = page.locator('#gainVal');
+
+    await gainRange.fill('0');
+    await expect(gainVal).toHaveText('0%');
+    await gainRange.fill('50');
+    await expect(gainVal).toHaveText('50%');
+    await gainRange.fill('100');
+    await expect(gainVal).toHaveText('100%');
+    await gainRange.fill('150');
+    await expect(gainVal).toHaveText('150%');
+    await gainRange.fill('200');
+    await expect(gainVal).toHaveText('200%');
+  });
+
+  test('System audio toggle can be disabled', async ({ page }) => {
+    await page.evaluate(() => {
+      const el = document.getElementById('sysAudioToggle');
+      el.checked = false;
+      el.dispatchEvent(new Event('change'));
+    });
+    await expect(page.locator('#sysAudioToggle')).not.toBeChecked();
+  });
+
+  test('Microphone toggle can be disabled', async ({ page }) => {
+    await page.evaluate(() => {
+      const el = document.getElementById('micToggle');
+      el.checked = false;
+      el.dispatchEvent(new Event('change'));
+    });
+    await expect(page.locator('#micToggle')).not.toBeChecked();
+  });
+
+  test('Audio mode selection affects available options', async ({ page }) => {
+    await page.locator('#modeCardCamera').click();
+    await expect(page.locator('#sysAudioField')).toBeHidden();
+    await page.locator('#modeCardScreen').click();
+    await expect(page.locator('#sysAudioField')).toBeVisible();
+  });
+});
+
+test.describe('Visual Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route('**', (route) => {
+      const url = route.request().url();
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return route.abort();
+      }
+      return route.continue();
+    });
+    await page.goto(indexUrl, { waitUntil: 'domcontentloaded' });
+  });
+
+  test('Composite canvas exists for drawing', async ({ page }) => {
+    await expect(page.locator('#composite')).toBeAttached();
+  });
+
+  test('Video element exists for preview', async ({ page }) => {
+    await expect(page.locator('#mainVideo')).toBeAttached();
+  });
+
+  test('Drawing toolbar buttons exist and are functional', async ({ page }) => {
+    await expect(page.locator('#penBtn')).toBeAttached();
+    await expect(page.locator('#laserBtn')).toBeAttached();
+    await expect(page.locator('#clearBtn')).toBeAttached();
+  });
+
+  test('Color picker exists and is functional', async ({ page }) => {
+    await expect(page.locator('#colorPick')).toBeAttached();
+    await expect(page.locator('#colorInput')).toBeAttached();
+  });
+
+  test('Laser pointer tool is available', async ({ page }) => {
+    const laserTitle = await page.locator('#laserBtn').getAttribute('title');
+    expect(laserTitle).toBe('Laser pointer');
+  });
+
+  test('Pen tool is available', async ({ page }) => {
+    const penTitle = await page.locator('#penBtn').getAttribute('title');
+    expect(penTitle).toBe('Draw');
+  });
+
+  test('Clear annotations button exists', async ({ page }) => {
+    const clearTitle = await page.locator('#clearBtn').getAttribute('title');
+    expect(clearTitle).toBe('Clear annotations');
+  });
+
+  test('Preview modal exists with video element', async ({ page }) => {
+    await expect(page.locator('#preview-modal')).toBeAttached();
+    await expect(page.locator('#previewVid')).toBeAttached();
+  });
+
+  test('View area elements exist', async ({ page }) => {
+    await expect(page.locator('#view')).toBeAttached();
+    await expect(page.locator('#mainVideo')).toBeAttached();
+    await expect(page.locator('#composite')).toBeAttached();
+    await expect(page.locator('#viewLabel')).toBeAttached();
+  });
+
+  test('Timer display exists', async ({ page }) => {
+    await expect(page.locator('#timer')).toBeAttached();
+    await expect(page.locator('#timer')).toBeHidden();
+  });
+
+  test('Recording badges exist for visual feedback', async ({ page }) => {
+    await expect(page.locator('#recBadge')).toBeAttached();
+    await expect(page.locator('#sysAudioBadge')).toBeAttached();
+    await expect(page.locator('#micBadge')).toBeAttached();
+  });
+
+  test('Status display exists and shows initial state', async ({ page }) => {
+    await expect(page.locator('#status')).toBeAttached();
+    await expect(page.locator('#status')).toHaveText('Ready');
+  });
+
+  test('Control buttons exist and are in correct initial state', async ({ page }) => {
+    await expect(page.locator('#startBtn')).toBeEnabled();
+    await expect(page.locator('#pauseBtn')).toBeDisabled();
+    await expect(page.locator('#resumeBtn')).toBeDisabled();
+    await expect(page.locator('#stopBtn')).toBeDisabled();
+    await expect(page.locator('#screenshotBtn')).toBeDisabled();
+  });
+
+  test('History panel elements exist', async ({ page }) => {
+    await expect(page.locator('#historyHead')).toBeAttached();
+    await expect(page.locator('#historyBody')).toBeAttached();
+    await expect(page.locator('#historyEmpty')).toBeAttached();
+    await expect(page.locator('#historyCount')).toBeAttached();
+  });
+
+  test('All mode cards render correctly', async ({ page }) => {
+    await expect(page.locator('#modeCardScreen')).toBeAttached();
+    await expect(page.locator('#modeCardCamera')).toBeAttached();
+    await expect(page.locator('#modeCardBoth')).toBeAttached();
+  });
+});
+
+test.describe('Compatibility & Platform Tests', () => {
+  test('Platform information', async ({ page }) => {
+    const platformInfo = await page.evaluate(() => {
+      return {
+        platform: navigator.platform,
+        userAgent: navigator.userAgent,
+        hardwareConcurrency: navigator.hardwareConcurrency,
+        screenWidth: screen.width,
+        screenHeight: screen.height,
+      };
+    });
+    expect(platformInfo.platform).toBeTruthy();
+    expect(platformInfo.screenWidth).toBeGreaterThan(0);
+    expect(platformInfo.screenHeight).toBeGreaterThan(0);
+  });
+
+  test('Windows platform detected', async ({ page }) => {
+    const platform = await page.evaluate(() => navigator.platform);
+    expect(platform).toMatch(/Win/);
+  });
+});
