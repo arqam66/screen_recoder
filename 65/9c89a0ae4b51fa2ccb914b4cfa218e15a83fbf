@@ -1,0 +1,19 @@
+tests/recorder.spec.js
+  s_56bfd3cbcb5e32::t_e5ea183c01d031 469-654
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "659c89a0ae4b51fa2ccb914b4cfa218e15a83fbf",
+  "prompts": {},
+  "sessions": {
+    "s_56bfd3cbcb5e32": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fae5eca1dffeYiK7aPcdQbscbm",
+        "model": "unknown"
+      },
+      "human_author": "Arqam Hussain <arqamtahir125@gmail.com>"
+    }
+  }
+}
