@@ -13,8 +13,8 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 
 | File | Description | Size |
 |------|-------------|------|
-| [**Setup (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller | ~75 MB |
-| [**Portable (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-1.3.0.exe) | Run directly — no installation needed | ~75 MB |
+| [**Setup (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller | ~75 MB |
+| [**Portable (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-1.3.0.exe) | Run directly — no installation needed | ~75 MB |
 
 **Requirements:** Windows 10 or 11 (64-bit)
 
@@ -47,7 +47,7 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 ## Quick Start
 
 ### From Release (Recommended)
-1. Download **Screen.Recorder-Setup-1.3.0.exe** from the [Releases page](https://github.com/arqam66/screen_recoder/releases)
+1. Download **Screen Recorder-Setup-1.3.0.exe** from the [Releases page](https://github.com/arqam66/screen_recoder/releases)
 2. Run the installer — it adds Start Menu and Desktop shortcuts
 3. Launch "Screen Recorder" from your Start Menu
 4. Select your recording mode, pick your screen/window, and click **Start**

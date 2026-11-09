@@ -38,8 +38,8 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 built with
 
 | Package | Filename | Size | Description |
 |---|---|---|---|
-| **Installer** | [`Screen.Recorder-Setup-1.3.0.exe`](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-Setup-1.3.0.exe) | ~75 MB | Full installer with Start Menu & Desktop shortcuts |
-| **Portable** | [`Screen.Recorder-1.3.0.exe`](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-1.3.0.exe) | ~75 MB | Standalone executable, no install required |
+| **Installer** | [`Screen Recorder-Setup-1.3.0.exe`](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-Setup-1.3.0.exe) | ~75 MB | Full installer with Start Menu & Desktop shortcuts |
+| **Portable** | [`Screen Recorder-1.3.0.exe`](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-1.3.0.exe) | ~75 MB | Standalone executable, no install required |
 
 ### What's New in v1.3.0
 - **Theme Toggle Switch**: Smooth animated switch toggling Dark, Light, and Light Panda themes.
