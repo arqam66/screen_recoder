@@ -76,12 +76,46 @@ Screen Recorder is a desktop application for Windows that lets you capture your 
 
 ## Download
 
-| File | Description | Size |
-|------|-------------|------|
-| [**Setup (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller | ~75 MB |
-| [**Portable (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-1.3.0.exe) | Run directly — no installation needed | ~75 MB |
+| File | Type | Architecture | Size | Checksum (SHA-256) |
+|------|------|--------------|------|--------------------|
+| [**Screen.Recorder-Setup-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-Setup-1.3.0.exe) | NSIS Installer (Start Menu, Desktop Shortcut, Auto-Updater) | Windows x64 (10/11) | ~75 MB | `F7F34129EB79283D0EAB00D5671232CEE766766173507897C63A7273EB395C64` |
+| [**Screen.Recorder-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-1.3.0.exe) | Portable Executable (Zero Installation, Run Anywhere) | Windows x64 (10/11) | ~75 MB | `7D011197AF652104D3387F9A5AA05D5E05CD335AE3B275B55A52B564FB928EC2` |
 
-**Requirements:** Windows 10 or 11 (64-bit)
+> [!TIP]
+> **Which one should I choose?**
+> - **Setup (.exe)**: Recommended for primary computers. Sets up official Windows shortcuts, uninstaller in Windows Settings, and file associations.
+> - **Portable (.exe)**: Best for USB flash drives, work computers without administrative rights, or quick temporary recording sessions.
+
+**Operating System Requirements:** Windows 10 or 11 (64-bit). No third-party codecs or virtual audio cables required.
+
+---
+
+## Detailed Feature Walkthrough
+
+### 1. Ultra-Low Overhead Recording Engine
+- **Hardware-Accelerated Compositing**: Powered by Chromium GPU pipelines for smooth 60 FPS recording at 720p or 1080p without dropping frames.
+- **Continuous 1-Second Chunk Streaming**: Writes stream chunks progressively to ensure low memory usage even across multi-hour marathon sessions.
+- **Header Duration Injection (`fixWebmDuration`)**: Patches Matroska Segment Info metadata upon capture stop so output WebM files have seekable progress bars and correct time metadata across VLC, Windows Media Player, and web players.
+
+### 2. Audio Subsystem & WASAPI Loopback
+- **Direct System Audio**: Captures crystal-clear internal computer sound via native Windows WASAPI loopback without echo or virtual drivers.
+- **Dual Stream Mixing**: Web Audio API `AudioContext` connects microphone and loopback audio tracks into a unified `MediaStreamDestination`.
+- **Live Gain Control & VU Metering**: Real-time DB volume slider with responsive visual level meter.
+
+### 3. Face-Cam & Picture-in-Picture Modes
+- **Screen + Camera Overlay**: Position your webcam feed seamlessly in Top-Left, Top-Right, Bottom-Left, or Bottom-Right.
+- **Shape & Geometry**: Choose between modern circular cutout or standard 16:9 rectangle with aspect-ratio preservation.
+- **Adjustable Size**: Scale webcam overlay on the fly (10% to 50% relative screen area).
+
+### 4. Interactive Live Annotations
+- **Laser Pointer**: Glowing red pointer track following cursor coordinates rendered straight into the final recording canvas.
+- **Pen Drawing & Highlighting**: Annotate diagrams, presentations, and code live while recording.
+- **Color Selector**: Dynamic palette switcher with instant stroke clearing (`Clear` button).
+
+### 5. In-Session History & Local Privacy
+- **Instant Preview & Retakes**: Review recordings in the built-in modal before saving.
+- **History Drawer**: Access in-memory recording history thumbnails, duration, and re-download links without saving duplicate files to disk.
+- **100% Offline & Private**: Zero telemetry, zero cloud tracking, zero network requests. Everything remains strictly on your local PC.
 
 ---
 
