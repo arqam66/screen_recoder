@@ -1,0 +1,26 @@
+{
+  "mcp": {
+    "auth_mode": "bearer",
+    "tool_scopes": {
+      "read": true,
+      "write": false,
+      "egress": false
+    }
+  },
+  "engine": {
+    "host": "127.0.0.1",
+    "port": 8420
+  },
+  "database": {
+    "sqlite_path": "~/.laya/data/laya.db",
+    "chroma_path": "~/.laya/data/chroma"
+  },
+  "retention": {
+    "cards_days": 30,
+    "events_days": 90
+  },
+  "notifications": {
+    "desktop": true,
+    "sound": false
+  }
+}

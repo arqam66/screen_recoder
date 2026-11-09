@@ -37,10 +37,12 @@ No download required — launch the app directly in your browser:
 | **System Audio** | Captures device audio via WASAPI loopback — no virtual cable needed |
 | **Microphone** | Mix mic voice alongside system audio in real time |
 | **Audio Mixer** | Web Audio API gain control, real-time VU meter |
+| **Resolution Control** | 720p (1280×720) default, changeable up to 1080p (1920×1080) max — keeps CPU/RAM low so recording never stalls the system |
 | **Annotations** | Draw on screen while recording with pen tool |
 | **Laser Pointer** | Real-time laser pointer rendered into the video |
 | **Screenshot** | Capture PNG snapshots any time during recording |
 | **Hotkeys** | Fully customizable keyboard shortcuts |
+| **Non-stop Recording** | Recording keeps running even if the OS/browser ends a share; Stop requires explicit confirmation so captures can't end by accident |
 | **Local Save** | Save as WebM or MP4 — files never leave your machine |
 | **History Panel** | In-session recording history with thumbnails, preview, and re-download |
 | **Dark / Light Theme** | Persisted theme toggle |

@@ -42,11 +42,15 @@
       "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
+      "artifactName": "${productName}-Setup-${version}.exe",
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Screen Recorder"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}.exe"
     }
   },
   "devDependencies": {
@@ -56,5 +60,8 @@
   },
   "dependencies": {
     "has-flag": "^5.0.1"
+  },
+  "allowScripts": {
+    "electron@31.7.7": true
   }
 }

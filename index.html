@@ -18,45 +18,62 @@
    THEME TOKENS
 ══════════════════════════════════════════════════ */
 :root,[data-theme="dark"]{
-  --bg:#080a10;
-  --surface:#10131e;
-  --surface2:#181b2a;
-  --surface3:#1f2337;
-  --border:rgba(255,255,255,.06);
-  --border2:rgba(255,255,255,.1);
-  --accent:#7c73ff;
-  --accent2:#ff6584;
-  --accent-glow:rgba(124,115,255,.2);
-  --text:#eaeef5;
-  --sub:#6f7591;
-  --sub2:#9399b0;
-  --red:#ef4444;
-  --green:#22c55e;
-  --yellow:#f59e0b;
-  --orange:#f97316;
-  --radius:12px;
-  --radius-sm:8px;
-  --radius-lg:18px;
-  --shadow:0 2px 16px rgba(0,0,0,.35);
-  --shadow-lg:0 8px 48px rgba(0,0,0,.6);
-  --transition:.2s cubic-bezier(.4,0,.2,1);
-  --sidebar-w:310px;
+  --bg:#0f1115;
+  --surface:#171a20;
+  --surface2:#1e2128;
+  --surface3:#262a33;
+  --border:rgba(255,255,255,.08);
+  --border2:rgba(255,255,255,.14);
+  --accent:#d14a3a;
+  --text:#e8eaed;
+  --sub:#8a8f98;
+  --sub2:#5c6169;
+  --red:#d14a3a;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+  --shadow-lg:0 4px 16px rgba(0,0,0,.5);
+  --transition:.15s ease;
+  --sidebar-w:280px;
 }
 [data-theme="light"]{
-  --bg:#f0f2f8;
+  --bg:#f4f5f7;
   --surface:#ffffff;
-  --surface2:#f5f6fb;
-  --surface3:#eaecf5;
+  --surface2:#eceeee;
+  --surface3:#e1e3e6;
+  --border:rgba(0,0,0,.10);
+  --border2:rgba(0,0,0,.16);
+  --accent:#b33a2c;
+  --text:#1c1f24;
+  --sub:#6b7078;
+  --sub2:#9aa0a6;
+  --red:#b33a2c;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,.08);
+  --shadow-lg:0 4px 16px rgba(0,0,0,.07);
+  --transition:.15s ease;
+  --sidebar-w:280px;
+}
+/* Light Panda theme — soft black & white with bamboo green accent */
+[data-theme="light-panda"]{
+  --bg:#fafbfa;
+  --surface:#ffffff;
+  --surface2:#f0f2f0;
+  --surface3:#e4e6e4;
   --border:rgba(0,0,0,.08);
   --border2:rgba(0,0,0,.14);
-  --accent:#6355ff;
-  --accent2:#e5476f;
-  --accent-glow:rgba(99,85,255,.15);
-  --text:#1a1d2e;
-  --sub:#6b7280;
-  --sub2:#9ca3af;
-  --shadow:0 2px 12px rgba(0,0,0,.08);
-  --shadow-lg:0 8px 40px rgba(0,0,0,.15);
+  --accent:#2e7d32;
+  --text:#1a1a1a;
+  --sub:#5a6a5a;
+  --sub2:#8a9a8a;
+  --red:#b3261e;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 16px rgba(0,0,0,.05);
+  --transition:.15s ease;
+  --sidebar-w:280px;
 }
 
 /* ══════════════════════════════════════════════════
@@ -80,51 +97,50 @@ body{
 /* ── Header ── */
 .app-header{
   display:flex;align-items:center;gap:14px;
-  padding:18px 24px 16px;
+  padding:16px 24px 14px;
   border-bottom:1px solid var(--border);
   background:var(--surface);
   position:sticky;top:0;z-index:50;
   box-shadow:var(--shadow);
 }
-.app-logo{font-size:22px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;line-height:1}
-.app-logo .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.app-subtitle{color:var(--sub);font-size:12px;font-weight:500;margin-left:4px}
+.app-logo{font-size:18px;font-weight:600;letter-spacing:-.2px;display:flex;align-items:center;gap:8px;line-height:1}
+.app-subtitle{color:var(--sub);font-size:10px;font-weight:500;margin-left:6px}
 .header-spacer{flex:1}
-.header-badges{display:flex;gap:6px;align-items:center}
+.header-badges{display:flex;gap:8px;align-items:center}
 
 /* ── Rec badge ── */
 .rec-badge{
-  display:none;align-items:center;gap:5px;
-  background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);
-  border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--red);
-  letter-spacing:.3px;
+  display:none;align-items:center;gap:6px;
+  background:rgba(209,74,58,.10);border:1px solid rgba(209,74,58,.25);
+  border-radius:20px;padding:3px 9px;font-size:10px;font-weight:600;color:var(--red);
+  letter-spacing:.2px;
 }
 .rec-badge.visible{display:flex}
-.rec-dot-live{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{opacity:.6;box-shadow:0 0 0 5px rgba(239,68,68,0)}}
+.rec-dot-live{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(209,74,58,.4)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(209,74,58,0)}}
 
-/* ── System audio badge ── */
 .sys-audio-badge{
-  display:none;align-items:center;gap:5px;
-  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);
-  border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--green);
+  display:none;align-items:center;gap:6px;
+  background:rgba(209,74,58,.06);border:1px solid rgba(209,74,58,.18);
+  border-radius:20px;padding:3px 9px;font-size:10px;font-weight:600;color:var(--sub2);
 }
 .sys-audio-badge.visible{display:flex}
 
 .mic-badge{
-  display:none;align-items:center;gap:5px;
-  background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);
-  border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--yellow);
+  display:none;align-items:center;gap:6px;
+  background:rgba(209,74,58,.06);border:1px solid rgba(209,74,58,.18);
+  border-radius:20px;padding:3px 9px;font-size:10px;font-weight:600;color:var(--sub2);
 }
 .mic-badge.visible{display:flex}
 
 /* ── Theme toggle ── */
 .theme-btn{
-  width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);
   background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:17px;transition:all var(--transition);color:var(--text);
+  font-size:11px;font-weight:600;transition:all var(--transition);color:var(--text);
 }
-.theme-btn:hover{background:var(--surface3);transform:scale(1.08)}
+.theme-btn:hover{background:var(--surface3);transform:none}
+.theme-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 /* ── App body ── */
 .app-body{
@@ -139,78 +155,77 @@ body{
 .sidebar{
   background:var(--surface);
   border-right:1px solid var(--border);
-  overflow-y:auto;padding:20px 16px;
-  display:flex;flex-direction:column;gap:12px;
+  overflow-y:auto;padding:16px 14px;
+  display:flex;flex-direction:column;gap:10px;
 }
 
 /* ── Mode cards ── */
-.mode-grid{display:flex;flex-direction:column;gap:8px}
+.mode-grid{display:flex;flex-direction:column;gap:6px}
 .mode-card{
-  padding:13px 16px;border-radius:var(--radius);
+  padding:10px 14px;border-radius:var(--radius-sm);
   background:var(--surface2);border:1.5px solid transparent;cursor:pointer;
   transition:all var(--transition);-webkit-user-select:none;user-select:none;
-  display:flex;align-items:center;gap:12px;
-  box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:10px;
+  box-shadow:none;
 }
-.mode-card:hover{background:var(--surface3);border-color:var(--border2);transform:translateX(2px)}
+.mode-card:hover{background:var(--surface3);border-color:var(--border2);transform:none}
 .mode-card.active{
   border-color:var(--accent);
-  background:linear-gradient(135deg,var(--surface3),rgba(124,115,255,.06));
-  box-shadow:0 0 0 1px var(--accent-glow);
+  background:var(--surface3);
 }
 .mode-card input{display:none}
-.mode-icon{font-size:22px;flex-shrink:0}
-.mode-info .mode-label{font-weight:700;font-size:13px;letter-spacing:-.1px}
-.mode-info .mode-desc{color:var(--sub);font-size:11px;margin-top:2px;line-height:1.4}
+.mode-icon{width:20px;height:20px;flex-shrink:0}
+.mode-info .mode-label{font-weight:600;font-size:12px;letter-spacing:-.1px}
+.mode-info .mode-desc{color:var(--sub);font-size:10px;margin-top:1px;line-height:1.4}
 
 /* ── Section heading ── */
 .sect-head{
-  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
-  color:var(--sub);padding:0 2px;margin-top:4px;display:flex;align-items:center;gap:8px;
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--sub);padding:0;margin-top:8px;margin-bottom:2px;display:flex;align-items:center;gap:8px;
 }
 .sect-head::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* ── Accordion panel ── */
-.accordion{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.accordion{border-radius:var(--radius-sm);overflow:hidden;box-shadow:none}
 .accordion-head{
-  display:flex;align-items:center;gap:10px;padding:12px 16px;
-  background:var(--surface2);cursor:pointer;
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:transparent;cursor:pointer;
   transition:background var(--transition);-webkit-user-select:none;user-select:none;
-  border:1px solid var(--border);border-radius:var(--radius);
+  border:none;
 }
-.accordion-head:hover{background:var(--surface3)}
-.accordion-head.open{border-radius:var(--radius) var(--radius) 0 0;border-bottom-color:transparent}
-.accordion-title{font-weight:600;font-size:13px;flex:1}
-.accordion-icon{font-size:11px;color:var(--sub);transition:transform var(--transition)}
+.accordion-head:hover{background:var(--surface2)}
+.accordion-head.open{background:var(--surface2);border-radius:0}
+.accordion-title{font-weight:600;font-size:12px;flex:1}
+.accordion-icon{font-size:10px;color:var(--sub);transition:transform var(--transition)}
 .accordion-head.open .accordion-icon{transform:rotate(180deg)}
 .accordion-body{
   background:var(--surface2);border:1px solid var(--border);border-top:none;
-  border-radius:0 0 var(--radius) var(--radius);
+  border-radius:0 0 var(--radius-sm) var(--radius-sm);
   max-height:0;overflow:hidden;
-  transition:max-height .3s cubic-bezier(.4,0,.2,1),padding .3s;
-  padding:0 16px;
+  transition:max-height .2s ease,padding .2s ease;
+  padding:0 14px;
 }
-.accordion-body.open{max-height:600px;padding:14px 16px}
+.accordion-body.open{max-height:500px;padding:10px 14px}
 
 /* ── Form fields ── */
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
 .field:last-child{margin-bottom:0}
-.field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--sub)}
-.field-row{display:flex;align-items:center;gap:10px}
+.field-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--sub)}
+.field-row{display:flex;align-items:center;gap:8px}
 
 select,input[type=text]{
   width:100%;background:var(--bg);border:1.5px solid var(--border2);color:var(--text);
-  padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;outline:none;
-  transition:border-color var(--transition),box-shadow var(--transition);
+  padding:7px 10px;border-radius:var(--radius-sm);font-size:12px;outline:none;
+  transition:border-color var(--transition);
   font-family:inherit;font-weight:500;
 }
 select{
   -webkit-appearance:none;appearance:none;cursor:pointer;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236f7591' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 10px center;padding-right:32px;
+  background-repeat:no-repeat;background-position:right 8px center;padding-right:28px;
 }
 select:hover,input[type=text]:hover{border-color:var(--border2)}
-select:focus,input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+select:focus,input[type=text]:focus{border-color:var(--accent);}
 
 /* range slider */
 input[type=range]{
@@ -223,7 +238,7 @@ input[type=range]::-webkit-slider-runnable-track{
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
   background:var(--accent);border:2px solid var(--bg);margin-top:-5.5px;
-  box-shadow:0 0 0 2px var(--accent-glow);cursor:pointer;transition:transform .15s
+  cursor:pointer;transition:transform .15s
 }
 input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
 input[type=range]::-moz-range-track{height:5px;background:var(--surface3);border-radius:3px;border:none}
@@ -255,8 +270,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   font-family:inherit;
 }
 .hotkey-input:focus,.hotkey-input.capturing{
-  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);
-  outline:none;color:var(--accent2);
+  border-color:var(--accent);
+  outline:none;color:var(--sub);
 }
 .hotkey-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .hotkey-row:last-child{margin-bottom:0}
@@ -276,52 +291,45 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 ══════════════════════════════════════════════════ */
 .main-panel{
   display:flex;flex-direction:column;
-  padding:20px 22px;gap:14px;overflow-y:auto;
-  background:linear-gradient(180deg,var(--bg) 0%,var(--bg) 100%);
+  padding:16px 20px;gap:10px;overflow-y:auto;
+  background:var(--bg);
 }
 
 /* ── Control buttons ── */
-.ctrl-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ctrl-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .btn{
-  padding:10px 22px;border-radius:var(--radius-sm);border:none;font-size:13px;font-weight:600;
-  cursor:pointer;transition:all var(--transition);letter-spacing:.2px;
-  font-family:inherit;position:relative;overflow:hidden;
-  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  padding:8px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:background var(--transition),border-color var(--transition),color var(--transition);
+  font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;background:var(--surface2);color:var(--text);
 }
-.btn::after{
-  content:'';position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(135deg,transparent 50%,rgba(255,255,255,.06));
-  pointer-events:none
-}
-.btn:disabled{opacity:.3;cursor:default;transform:none!important;box-shadow:none!important}
-.btn:not(:disabled):hover{transform:translateY(-1px)}
-.btn:not(:disabled):active{transform:translateY(0) scale(.97)}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#8b83ff);color:#fff;box-shadow:0 2px 14px rgba(124,115,255,.35)}
-.btn-primary:not(:disabled):hover{box-shadow:0 4px 22px rgba(124,115,255,.5)}
-.btn-danger{background:linear-gradient(135deg,var(--red),#ff5555);color:#fff;box-shadow:0 2px 12px rgba(239,68,68,.3)}
-.btn-danger:not(:disabled):hover{box-shadow:0 4px 20px rgba(239,68,68,.4)}
-.btn-warn{background:linear-gradient(135deg,var(--yellow),#fbbf24);color:#1a1a1a;box-shadow:0 2px 12px rgba(245,158,11,.3)}
-.btn-warn:not(:disabled):hover{box-shadow:0 4px 20px rgba(245,158,11,.4)}
-.btn-ghost{background:var(--surface);color:var(--text);border:1.5px solid var(--border2);box-shadow:var(--shadow)}
-.btn-ghost:not(:disabled):hover{background:var(--surface2);border-color:var(--border2)}
-.btn-icon{padding:10px 13px}
+.btn:disabled{opacity:.45;cursor:default;box-shadow:none}
+.btn:not(:disabled):hover{background:var(--surface3);border-color:var(--border2)}
+.btn:not(:disabled):active{background:var(--surface);transform:none}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:not(:disabled):hover{background:#b53d2f}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-warn{background:var(--surface3);color:var(--text);border-color:var(--border2)}
+.btn-warn:not(:disabled):hover{background:var(--surface);border-color:var(--border2)}
+.btn-ghost{background:transparent;border:none;color:var(--text);padding:8px 11px}
+.btn-ghost:not(:disabled):hover{background:var(--surface2)}
+.btn-icon{padding:8px 10px}
 
 /* ── Status bar ── */
 .status-bar{
-  display:flex;align-items:center;gap:14px;
+  display:flex;align-items:center;gap:12px;
   background:var(--surface);border-radius:var(--radius-sm);
-  padding:9px 16px;box-shadow:var(--shadow);border:1px solid var(--border);
-  min-height:42px;
+  padding:8px 14px;box-shadow:var(--shadow);border:1px solid var(--border);
+  min-height:40px;
 }
-#status{font-weight:600;font-size:13px;letter-spacing:-.1px;flex:1}
+#status{font-weight:600;font-size:12px;letter-spacing:-.1px;flex:1}
 #timer{
-  font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;
+  font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;
   color:var(--accent);display:none;letter-spacing:0;font-feature-settings:"tnum" 1
 }
 #meter-wrap{display:none;flex-direction:column;gap:3px}
 #meter-wrap span{font-size:9px;color:var(--sub);text-transform:uppercase;letter-spacing:.6px}
-#meter{width:80px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
-#meter-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));border-radius:3px;transition:width .07s}
+#meter{width:70px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+#meter-bar{height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width .07s}
 
 /* ── Keyboard hints ── */
 .keys{font-size:11px;color:var(--sub);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -332,7 +340,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 
 /* ── View area ── */
 #view{
-  width:100%;background:#000;display:none;border-radius:var(--radius);
+  width:100%;background:#000;display:none;border-radius:var(--radius-sm);
   overflow:hidden;position:relative;box-shadow:var(--shadow-lg);
   border:1px solid rgba(255,255,255,.04);
   aspect-ratio:16/9;
@@ -340,29 +348,29 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 #mainVideo{width:100%;height:100%;display:block;object-fit:contain}
 #composite{width:100%;height:100%;display:none;object-fit:contain}
 .view-label{
-  position:absolute;top:12px;left:12px;background:rgba(0,0,0,.55);
-  color:#fff;font-size:10px;padding:4px 10px;border-radius:20px;
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);
+  color:#fff;font-size:10px;padding:3px 8px;border-radius:20px;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   pointer-events:none;font-weight:600;letter-spacing:.4px;
   text-transform:uppercase;border:1px solid rgba(255,255,255,.08);
 }
 
 /* ── Drawing toolbar ── */
 #draw-bar{
-  position:absolute;top:12px;right:12px;display:none;
-  flex-direction:column;gap:6px;z-index:10;
+  position:absolute;top:10px;right:10px;display:none;
+  flex-direction:column;gap:5px;z-index:10;
 }
 .draw-btn{
-  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
-  font-size:15px;background:rgba(10,11,16,.8);color:#fff;
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;
+  font-size:12px;background:rgba(10,11,16,.8);color:#fff;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   transition:all var(--transition);display:flex;align-items:center;justify-content:center;
-  border:1px solid rgba(255,255,255,.06);box-shadow:0 2px 8px rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.06);box-shadow:0 1px 4px rgba(0,0,0,.3);
 }
-.draw-btn:hover{background:rgba(28,31,46,.9);transform:scale(1.08)}
-.draw-btn.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 16px var(--accent-glow)}
-.color-dot{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.8);cursor:pointer;margin:2px auto 0;transition:transform var(--transition)}
-.color-dot:hover{transform:scale(1.15)}
+.draw-btn:hover{background:rgba(28,31,46,.9);transform:none}
+.draw-btn.active{background:var(--accent);border-color:var(--accent)}
+.color-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.8);cursor:pointer;margin:2px auto 0;transition:transform var(--transition)}
+.color-dot:hover{transform:scale(1.1)}
 
 /* ── Countdown overlay ── */
 #countdown{
@@ -372,87 +380,83 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   flex-direction:column;gap:24px;
 }
 .countdown-num{
-  font-size:130px;font-weight:900;color:#fff;line-height:1;
-  text-shadow:0 0 60px rgba(124,115,255,.5),0 0 120px rgba(124,115,255,.2);
-  font-family:'Inter',sans-serif;-webkit-text-stroke:2px rgba(124,115,255,.3);
-  animation:cdPop .5s cubic-bezier(.34,1.56,.64,1)
+  font-size:130px;font-weight:800;color:#fff;line-height:1;
+  font-family:'Inter',sans-serif;-webkit-text-stroke:1px rgba(255,255,255,.4);
+  animation:cdPop .5s cubic-bezier(.4,0,.2,1)
 }
-@keyframes cdPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes cdPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
 #countdown-cancel{
-  padding:10px 28px;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,.2);
-  background:rgba(255,255,255,.06);color:#fff;font-size:13px;font-weight:600;
+  padding:9px 24px;border-radius:var(--radius-sm);border:1px solid var(--border2);
+  background:var(--surface2);color:var(--text);font-size:12px;font-weight:600;
   cursor:pointer;transition:all var(--transition);font-family:inherit;
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
 }
-#countdown-cancel:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4)}
+#countdown-cancel:hover{background:var(--surface3);border-color:var(--border2)}
 
 /* ══════════════════════════════════════════════════
    INSTRUCTION BOX
 ══════════════════════════════════════════════════ */
 #instr{
   background:var(--surface);border-left:3px solid var(--accent);
-  border-radius:var(--radius-sm);padding:13px 16px;
-  font-size:12.5px;line-height:1.85;display:none;box-shadow:var(--shadow);
+  border-radius:var(--radius-sm);padding:12px 16px;
+  font-size:12px;line-height:1.7;display:none;box-shadow:var(--shadow);
   border:1px solid var(--border);border-left:3px solid var(--accent);
 }
 #instr b{color:var(--accent)}
-#instr .warn{color:var(--accent2)}
 
 /* ══════════════════════════════════════════════════
    HISTORY PANEL
 ══════════════════════════════════════════════════ */
 .history-panel{
-  background:var(--surface);border-radius:var(--radius);
+  background:var(--surface);border-radius:var(--radius-sm);
   border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;
 }
 .history-head{
-  display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;
   transition:background var(--transition);-webkit-user-select:none;user-select:none;
 }
 .history-head:hover{background:var(--surface2)}
-.history-title{font-weight:700;font-size:13px;flex:1}
+.history-title{font-weight:600;font-size:12px;flex:1}
 .history-count{
   background:var(--accent);color:#fff;border-radius:10px;
-  padding:1px 8px;font-size:10px;font-weight:700;min-width:20px;text-align:center;
+  padding:1px 7px;font-size:9px;font-weight:700;min-width:18px;text-align:center;
 }
-.history-toggle-icon{font-size:11px;color:var(--sub);transition:transform var(--transition)}
+.history-toggle-icon{font-size:10px;color:var(--sub);transition:transform var(--transition)}
 .history-head.open .history-toggle-icon{transform:rotate(180deg)}
 .history-body{
-  max-height:0;overflow:hidden;transition:max-height .3s cubic-bezier(.4,0,.2,1);
+  max-height:0;overflow:hidden;transition:max-height .2s ease;
   border-top:1px solid transparent;
 }
-.history-body.open{max-height:500px;border-top-color:var(--border);overflow-y:auto}
-.history-empty{padding:24px;text-align:center;color:var(--sub);font-size:13px}
+.history-body.open{max-height:400px;border-top-color:var(--border);overflow-y:auto}
+.history-empty{padding:20px;text-align:center;color:var(--sub);font-size:12px}
 .history-list{display:flex;flex-direction:column;gap:0}
 .history-item{
-  display:flex;align-items:center;gap:12px;padding:10px 16px;
+  display:flex;align-items:center;gap:10px;padding:9px 14px;
   border-bottom:1px solid var(--border);transition:background var(--transition);
 }
 .history-item:last-child{border-bottom:none}
 .history-item:hover{background:var(--surface2)}
 .history-thumb{
-  width:56px;height:36px;border-radius:5px;object-fit:cover;
+  width:48px;height:30px;border-radius:4px;object-fit:cover;
   background:#000;border:1px solid var(--border2);flex-shrink:0;
 }
 .history-meta{flex:1;min-width:0}
-.history-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.history-info{font-size:10px;color:var(--sub);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.history-name{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-info{font-size:9px;color:var(--sub);margin-top:1px;display:flex;gap:6px;flex-wrap:wrap}
 .history-badge{
   background:var(--surface3);border-radius:4px;padding:1px 6px;
-  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--sub2);
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--sub2);
 }
 .history-badge.screen{color:var(--accent)}
-.history-badge.camera{color:var(--accent2)}
-.history-badge.both{color:var(--green)}
+.history-badge.camera{color:var(--sub)}
+.history-badge.both{color:var(--accent)}
 .history-actions{display:flex;gap:6px;flex-shrink:0}
 .history-btn{
-  padding:5px 10px;border-radius:6px;border:1px solid var(--border2);
-  background:var(--surface2);color:var(--sub2);font-size:11px;font-weight:600;
+  padding:4px 9px;border-radius:4px;border:1px solid var(--border2);
+  background:var(--surface2);color:var(--sub2);font-size:10px;font-weight:600;
   cursor:pointer;transition:all var(--transition);font-family:inherit;
 }
 .history-btn:hover{background:var(--surface3);color:var(--text)}
-.history-btn.dl:hover{border-color:rgba(34,197,94,.4);color:var(--green)}
-.history-btn.del:hover{border-color:rgba(239,68,68,.3);color:var(--red)}
 
 /* ══════════════════════════════════════════════════
    MODALS
@@ -465,33 +469,33 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
-  -webkit-backdrop-filter: blur(10px);
+  padding: 16px;
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(10px);
 }
 .modal-box {
   background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: 24px;
+  border-radius: var(--radius-sm);
+  padding: 20px;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border2);
-  animation: modalIn .25s ease;
-  max-height: 90vh;
+  animation: modalIn .2s ease;
+  max-height: 85vh;
   overflow-y: auto;
 }
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 .modal-close {
   background: none;
   border: none;
   color: var(--sub);
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
-  padding: 5px;
+  padding: 4px;
   transition: color var(--transition);
 }
 .modal-close:hover {
@@ -548,20 +552,20 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 #preview-modal .modal-box{
   max-width:880px;width:100%;
 }
-@keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes modalIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 #preview-modal h3{margin-bottom:16px;font-size:17px;font-weight:800;letter-spacing:-.3px}
 #previewVid{width:100%;border-radius:var(--radius-sm);max-height:55vh;background:#000}
 .modal-meta{font-size:12px;color:var(--sub);margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .fmt-badge{
   background:var(--surface2);border:1px solid var(--border2);
-  border-radius:5px;padding:3px 10px;font-weight:700;font-size:10px;letter-spacing:.6px;text-transform:uppercase
+  border-radius:4px;padding:2px 8px;font-weight:700;font-size:9px;letter-spacing:.4px;text-transform:uppercase
 }
-.fmt-badge.webm{border-color:rgba(124,115,255,.4);color:var(--accent)}
-.fmt-badge.mp4{border-color:rgba(34,197,94,.4);color:var(--green)}
+.fmt-badge.webm{border-color:rgba(209,74,58,.3);color:var(--accent)}
+.fmt-badge.mp4{border-color:rgba(209,74,58,.3);color:var(--accent)}
 .modal-filename{margin-top:14px;display:flex;flex-direction:column;gap:6px}
 .modal-filename label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--sub)}
 .modal-filename input{width:100%;background:var(--bg);border:1.5px solid var(--border2);color:var(--text);padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;outline:none;font-family:inherit;transition:border-color var(--transition)}
-.modal-filename input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.modal-filename input:focus{border-color:var(--accent);}
 .fn-hint{font-size:10px;color:var(--sub);margin-top:4px}
 .fn-hint code{background:var(--surface3);padding:1px 5px;border-radius:4px;font-size:10px;font-family:monospace}
 .modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
@@ -588,16 +592,17 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 <!-- ── Header ── -->
 <header class="app-header">
   <div class="app-logo">
-    <span class="grad">Screen Recorder</span>
+    <span>Screen Recorder</span>
   </div>
-  <span class="app-subtitle">No upload · no limits</span>
+  <span class="app-subtitle">Screen · camera · audio — saved locally</span>
   <div class="header-spacer"></div>
   <div class="header-badges">
     <div class="rec-badge" id="recBadge"><div class="rec-dot-live"></div> REC</div>
     <div class="sys-audio-badge" id="sysAudioBadge">🔊 Sys Audio</div>
     <div class="mic-badge" id="micBadge">🎤 Mic</div>
   </div>
-  <button class="theme-btn" id="themeBtn" title="Toggle light/dark theme">🌙</button>
+  <button class="theme-btn" id="themeBtn" title="Toggle light/dark theme">Theme</button>
+  <button class="theme-btn" id="toggleBtn" title="Toggle recording on/off">⏺</button>
 </header>
 
 <!-- ── App body ── -->
@@ -612,26 +617,32 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <div class="mode-grid">
       <label class="mode-card active" id="modeCardScreen">
         <input type="radio" name="mode" value="screen" checked/>
-        <span class="mode-icon">🖥️</span>
+        <span class="mode-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </span>
         <div class="mode-info">
           <div class="mode-label">Screen only</div>
-          <div class="mode-desc">Tab / window + mic</div>
+          <div class="mode-desc">Window or full screen</div>
         </div>
       </label>
       <label class="mode-card" id="modeCardCamera">
         <input type="radio" name="mode" value="camera"/>
-        <span class="mode-icon">📷</span>
+        <span class="mode-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 21h-8a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2"/><circle cx="12" cy="13" r="2"/></svg>
+        </span>
         <div class="mode-info">
           <div class="mode-label">Camera only</div>
-          <div class="mode-desc">Face cam + voice</div>
+          <div class="mode-desc">Webcam and mic</div>
         </div>
       </label>
       <label class="mode-card" id="modeCardBoth">
         <input type="radio" name="mode" value="both"/>
-        <span class="mode-icon">🎬</span>
+        <span class="mode-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M18 21v-8a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8Z"/></svg>
+        </span>
         <div class="mode-info">
           <div class="mode-label">Screen + Camera</div>
-          <div class="mode-desc">Face overlay on screen</div>
+          <div class="mode-desc">Camera overlay on screen</div>
         </div>
       </label>
     </div>
@@ -641,7 +652,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <!-- VIDEO settings accordion -->
     <div class="accordion" id="accVideo">
       <div class="accordion-head" onclick="toggleAccordion('accVideo')">
-        <span>🎞️</span>
         <span class="accordion-title">Video</span>
         <span class="accordion-icon">▼</span>
       </div>
@@ -649,18 +659,15 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
         <div class="field">
           <label class="field-label">Frame Rate</label>
           <select id="fpsSelect" title="Recording Frame Rate">
-            <option value="60" selected>60 FPS (Ultra Smooth / Fast Motion)</option>
-            <option value="30">30 FPS (Standard)</option>
+            <option value="60" selected>60 FPS</option>
+            <option value="30">30 FPS</option>
           </select>
         </div>
         <div class="field">
-          <label class="field-label">Quality</label>
-          <select id="qualitySelect" title="Quality Preset">
-            <option value="20000000">Ultra (20 Mbps / 4K)</option>
-            <option value="12000000" selected>High (12 Mbps / Fast Motion)</option>
-            <option value="8000000">Full HD Standard (8 Mbps)</option>
-            <option value="4000000">Balanced (4 Mbps)</option>
-            <option value="2000000">Low / Compact (2 Mbps)</option>
+          <label class="field-label">Resolution</label>
+          <select id="resolutionSelect" title="Recording Resolution">
+            <option value="720p" selected>720p</option>
+            <option value="1080p">1080p</option>
           </select>
         </div>
         <div class="field opt-hidden" id="opt-campos">
@@ -692,7 +699,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <!-- AUDIO settings accordion -->
     <div class="accordion" id="accAudio">
       <div class="accordion-head open" onclick="toggleAccordion('accAudio')">
-        <span>🔊</span>
         <span class="accordion-title">Audio</span>
         <span class="accordion-icon">▼</span>
       </div>
@@ -732,7 +738,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <!-- OUTPUT settings accordion -->
     <div class="accordion" id="accOutput">
       <div class="accordion-head" onclick="toggleAccordion('accOutput')">
-        <span>💾</span>
         <span class="accordion-title">Output</span>
         <span class="accordion-icon">▼</span>
       </div>
@@ -750,7 +755,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <!-- HOTKEYS settings accordion -->
     <div class="accordion" id="accHotkeys">
       <div class="accordion-head" onclick="toggleAccordion('accHotkeys')">
-        <span>⌨️</span>
         <span class="accordion-title">Keyboard shortcuts</span>
         <span class="accordion-icon">▼</span>
       </div>
@@ -759,7 +763,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
         <div class="hotkey-row"><span class="hotkey-name">Pause / Resume</span><div class="hotkey-input" id="hk-pause" tabindex="0" data-action="pause"></div></div>
         <div class="hotkey-row"><span class="hotkey-name">Stop recording</span><div class="hotkey-input" id="hk-stop" tabindex="0" data-action="stop"></div></div>
         <div class="hotkey-row"><span class="hotkey-name">Screenshot</span><div class="hotkey-input" id="hk-screenshot" tabindex="0" data-action="screenshot"></div></div>
-        <button class="btn-reset-keys" id="resetHotkeysBtn">↺ Reset to defaults</button>
+        <button class="btn-reset-keys" id="resetHotkeysBtn">Reset to defaults</button>
       </div>
     </div>
 
@@ -773,11 +777,11 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 
     <!-- Controls -->
     <div class="ctrl-row">
-      <button class="btn btn-primary" id="startBtn">▶ Start</button>
-      <button class="btn btn-warn"    id="pauseBtn"  disabled>⏸ Pause</button>
-      <button class="btn btn-ghost"   id="resumeBtn" disabled>⏵ Resume</button>
-      <button class="btn btn-danger"  id="stopBtn"   disabled>⏹ Stop</button>
-      <button class="btn btn-ghost btn-icon" id="screenshotBtn" disabled title="Take screenshot (S)">📸</button>
+      <button class="btn btn-primary" id="startBtn">Start</button>
+      <button class="btn btn-warn"    id="pauseBtn"  disabled>Pause</button>
+      <button class="btn btn-ghost"   id="resumeBtn" disabled>Resume</button>
+      <button class="btn btn-danger"  id="stopBtn"   disabled>Stop</button>
+      <button class="btn btn-ghost btn-icon" id="screenshotBtn" disabled title="Take screenshot (S)">Screenshot</button>
     </div>
 
     <!-- Status bar -->
@@ -799,9 +803,9 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <video id="mainVideo" autoplay muted aria-label="Live preview"></video>
       <canvas id="composite" aria-label="Composite recording preview"></canvas>
       <div id="draw-bar">
-        <button class="draw-btn" id="laserBtn" title="Laser pointer">🔴</button>
-        <button class="draw-btn" id="penBtn"   title="Draw">✏️</button>
-        <button class="draw-btn" id="clearBtn" title="Clear annotations">🗑️</button>
+        <button class="draw-btn" id="laserBtn" title="Laser pointer">Laser</button>
+        <button class="draw-btn" id="penBtn"   title="Draw">Pen</button>
+        <button class="draw-btn" id="clearBtn" title="Clear annotations">Clear</button>
         <div class="color-dot" id="colorPick" title="Pen color"></div>
         <input type="color" id="colorInput" value="#ff6584" class="hidden" aria-label="Pen color picker"/>
       </div>
@@ -810,7 +814,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <!-- Recording history -->
     <div class="history-panel" id="historyPanel">
       <div class="history-head" id="historyHead" onclick="toggleHistory()">
-        <span>🕘</span>
         <span class="history-title">Recording History</span>
         <span class="history-count" id="historyCount">0</span>
         <span class="history-toggle-icon">▼</span>
@@ -827,7 +830,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 <!-- Countdown overlay -->
 <div id="countdown">
   <div class="countdown-num" id="countdownNum">3</div>
-  <button id="countdown-cancel">✕ Cancel (Esc)</button>
+  <button id="countdown-cancel">Cancel (Esc)</button>
 </div>
 
 <!-- Source Picker Modal -->
@@ -835,7 +838,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <div class="modal-box source-picker-box">
     <div class="modal-header">
       <h3>Select Screen or Window</h3>
-      <button class="modal-close" id="closeSourcePicker">✕</button>
+      <button class="modal-close" id="closeSourcePicker">Close</button>
     </div>
     <div class="source-list" id="sourceList">
       <!-- Sources will be injected here -->
@@ -862,11 +865,11 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <div class="fn-hint">Tokens: <code>{date}</code> <code>{time}</code> <code>{mode}</code></div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost"   id="discardBtn">🗑 Discard</button>
-      <button class="btn btn-ghost"   id="dlWebmBtn">⬇ Save as WebM</button>
-      <button class="btn btn-primary" id="dlMp4Btn">⬇ Save as MP4</button>
+      <button class="btn btn-ghost"   id="discardBtn">Discard</button>
+      <button class="btn btn-ghost"   id="dlWebmBtn">Save as WebM</button>
+      <button class="btn btn-primary" id="dlMp4Btn">Save as MP4</button>
     </div>
-    <div id="mp4Unavail">⚠ MP4 recording not supported — WebM plays in Chrome, Edge &amp; VLC</div>
+    <div id="mp4Unavail">MP4 recording not supported — WebM plays in Chrome, Edge & VLC</div>
   </div>
 </div>
 
@@ -895,6 +898,7 @@ const micBadge      = $('micBadge');
 const colorDot      = $('colorPick'),   colorInput  = $('colorInput');
 const gainRange      = $('gainRange'),    gainVal     = $('gainVal');
 const camSizeRange   = $('camSizeRange'), camSizeVal  = $('camSizeVal');
+const resolutionSelect = $('resolutionSelect');
 const sysAudioToggle = $('sysAudioToggle');
 const micToggle      = $('micToggle');
 const saveFilename  = $('saveFilename');
@@ -905,14 +909,34 @@ const historyCount  = $('historyCount');
 const keyHints      = $('keyHints');
 
 // ── Theme ────────────────────────────────────────────────────────────────────
+const THEMES = ['dark','light','light-panda'];
+const THEME_LABEL = {dark:'Light',light:'Panda','light-panda':'Dark'};
 let theme = localStorage.getItem('sr-theme') || 'dark';
+if(!THEMES.includes(theme)) theme = 'dark';
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme', t);
-  $('themeBtn').textContent = t === 'dark' ? '🌙' : '☀️';
+  const idx = THEMES.indexOf(t);
+  const next = THEMES[(idx + 1) % THEMES.length];
+  $('themeBtn').textContent = THEME_LABEL[next] || next;
   theme = t; localStorage.setItem('sr-theme', t);
 }
 applyTheme(theme);
-$('themeBtn').addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark'));
+$('themeBtn').addEventListener('click', () => {
+  const idx = THEMES.indexOf(theme);
+  applyTheme(THEMES[(idx + 1) % THEMES.length]);
+});
+
+// ── Toggle button (record on/off without confirmation) ───────────────────────
+let toggleAuto = false;
+$('toggleBtn').title = 'Toggle recording on/off';
+$('toggleBtn').addEventListener('click', () => {
+  toggleAuto = !toggleAuto;
+  $('toggleBtn').classList.toggle('active', toggleAuto);
+  $('toggleBtn').title = toggleAuto ? 'Auto-record ON' : 'Auto-record OFF';
+  if(toggleAuto && !isRecording && !startBtn.disabled){
+    start();
+  }
+});
 
 // ── Accordion helper ─────────────────────────────────────────────────────────
 function toggleAccordion(id){
@@ -956,25 +980,25 @@ function updateSysAudioVisibility(){
 // ── Mode UI ───────────────────────────────────────────────────────────────────
 const INSTRS = {
   screen:`<b>Screen only:</b><br>
-    1. Click <b>▶ Start</b> → screen share dialog opens<br>
+    1. Click <b>Start</b> → screen share dialog opens<br>
     2. Pick the tab or window you want to record<br>
-    3. System audio is captured automatically (WASAPI loopback)<br>
+    3. System audio is captured automatically<br>
     4. Enable <b>Microphone</b> in Audio settings to add voice commentary<br>
     5. Click <b>Share</b> → 3-second countdown → recording starts<br>
-    6. Return here → <b>⏹ Stop</b> → preview → download`,
+    6. Return here → <b>Stop</b> → preview → download`,
   camera:`<b>Camera only:</b><br>
-    1. Click <b>▶ Start</b> → allow camera access<br>
+    1. Click <b>Start</b> → allow camera access<br>
     2. 3-second countdown → recording begins<br>
-    3. Click <b>⏹ Stop</b> when done → preview → download<br>
-    <span class="warn">Enable <b>Microphone</b> in Audio settings to capture voice alongside your camera</span>`,
+    3. Click <b>Stop</b> when done → preview → download<br>
+    Enable <b>Microphone</b> in Audio settings to capture voice alongside your camera.`,
   both:`<b>Screen + Camera:</b><br>
-    1. Click <b>▶ Start</b> → share dialog opens<br>
-    2. Choose a <b>different</b> tab or window to record<br>
-    <span class="warn">⚠ Don't pick this recorder tab — it creates a mirror loop</span><br>
+    1. Click <b>Start</b> → share dialog opens<br>
+    2. Choose a different tab or window to record<br>
+    Don't pick this recorder tab — it creates a mirror loop.<br>
     3. Click <b>Share</b> → allow camera → 3-second countdown<br>
     4. System audio is captured automatically alongside the camera overlay<br>
     5. Enable <b>Microphone</b> in Audio settings to add voice commentary<br>
-    6. Return → <b>⏹ Stop</b> → preview → download one combined video`
+    6. Return → <b>Stop</b> → preview → download one combined video`
 };
 
 function getMode(){ return document.querySelector('input[name="mode"]:checked').value; }
@@ -1294,8 +1318,7 @@ function startMeter(){
 
     // Change color based on level
     if (level > 85) meterBar.style.background = 'var(--red)';
-    else if (level > 60) meterBar.style.background = 'var(--yellow)';
-    else meterBar.style.background = 'linear-gradient(90deg, var(--green), var(--yellow))';
+    else meterBar.style.background = 'var(--accent)';
 
     meterRaf = requestAnimationFrame(tick);
   };
@@ -1561,8 +1584,8 @@ function renderHistory(){
         </div>
       </div>
       <div class="history-actions">
-        <button class="history-btn dl" onclick="histDownload(${e.id})">⬇</button>
-        <button class="history-btn del" onclick="histDelete(${e.id})">🗑</button>
+        <button class="history-btn dl" onclick="histDownload(${e.id})">Download</button>
+        <button class="history-btn del" onclick="histDelete(${e.id})">Delete</button>
       </div>
     `;
 
@@ -1706,7 +1729,13 @@ async function start(){
 
   const m = getMode();
   currentMode = m;
-  const bitrate = parseInt($('qualitySelect')?.value || '12000000');
+
+  // Resolution cap: 720p (1280×720) default, 1080p (1920×1080) max.
+  // Keeps CPU/RAM load low so recording never stalls the system.
+  const res = resolutionSelect?.value || '720p';
+  const maxWidth  = res === '1080p' ? 1920 : 1280;
+  const maxHeight = res === '1080p' ? 1080 : 720;
+  const bitrate = res === '1080p' ? 12000000 : 6000000;
   const targetFps = parseInt($('fpsSelect')?.value || '60');
   TARGET_FPS = targetFps;
 
@@ -1737,8 +1766,8 @@ async function start(){
             mandatory: {
               chromeMediaSource: 'desktop',
               chromeMediaSourceId: sourceId,
-              maxWidth: 3840,
-              maxHeight: 2160,
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
               maxFrameRate: targetFps
             }
           },
@@ -1756,8 +1785,8 @@ async function start(){
             cursor: 'always',
             displaySurface: 'monitor',
             frameRate: { ideal: targetFps, max: targetFps },
-            width: { ideal: 3840 },
-            height: { ideal: 2160 }
+            width: { ideal: maxWidth },
+            height: { ideal: maxHeight }
           },
           audio: wantSysAudio
         });
@@ -1817,8 +1846,8 @@ async function start(){
             mandatory: {
               chromeMediaSource: 'desktop',
               chromeMediaSourceId: sourceId,
-              maxWidth: 3840,
-              maxHeight: 2160,
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
               maxFrameRate: targetFps
             }
           },
@@ -1836,8 +1865,8 @@ async function start(){
             cursor: 'always',
             displaySurface: 'monitor',
             frameRate: { ideal: targetFps, max: targetFps },
-            width: { ideal: 3840 },
-            height: { ideal: 2160 }
+            width: { ideal: maxWidth },
+            height: { ideal: maxHeight }
           },
           audio: wantSysAudio
         });
@@ -1884,10 +1913,12 @@ async function start(){
     if(!videoTrack) throw new Error('No video track available');
     recAudioTrack = audioTrack || null;
 
-    // Attach track onended listener so recording cleanly stops when user stops sharing via OS/browser UI
+    // Attach track onended listener — recording must NOT auto-stop when the OS
+    // or browser ends a share; only an explicit confirmed stop ends it. This
+    // keeps long captures running unattended without dying mid-session.
     videoTrack.onended = () => {
       if (isRecording) {
-        stop();
+        setStatus('⚠ Share ended by system — recording keeps running. Click Stop to end.');
       }
     };
 
@@ -1969,6 +2000,8 @@ function resume(){
 
 function stop(){
   if(recorder && recorder.state !== 'inactive'){
+    // Recording ends immediately — no confirmation dialog so captures never
+    // get interrupted by an accidental yes/no prompt.
     recorder.stop();
   }
 }

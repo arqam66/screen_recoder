@@ -18,8 +18,8 @@ test.describe('Screen Recorder UI and Functionality Tests', () => {
 
   test('Page loads and elements have correct default state', async ({ page }) => {
     await expect(page).toHaveTitle(/Screen Recorder/);
-    const titleText = await page.textContent('.app-logo .grad');
-    expect(titleText).toBe('Screen Recorder');
+    const titleText = await page.textContent('.app-logo');
+    expect(titleText.trim()).toBe('Screen Recorder');
 
     await expect(page.locator('#startBtn')).toBeEnabled();
     await expect(page.locator('#pauseBtn')).toBeDisabled();
@@ -59,13 +59,16 @@ test.describe('Screen Recorder UI and Functionality Tests', () => {
     await expect(videoAccordionBody).not.toHaveClass(/open/);
   });
 
-  test('Theme switcher toggles light/dark mode', async ({ page }) => {
+  test('Theme switcher cycles dark → light → light-panda → dark', async ({ page }) => {
     const root = page.locator('html');
+    const themeBtn = page.locator('#themeBtn');
     await expect(root).toHaveAttribute('data-theme', 'dark');
 
-    const themeBtn = page.locator('#themeBtn');
     await themeBtn.click();
     await expect(root).toHaveAttribute('data-theme', 'light');
+
+    await themeBtn.click();
+    await expect(root).toHaveAttribute('data-theme', 'light-panda');
 
     await themeBtn.click();
     await expect(root).toHaveAttribute('data-theme', 'dark');
@@ -263,17 +266,14 @@ test.describe('Additional UI Controls', () => {
     await expect(input).toHaveValue('my-video-{mode}');
   });
 
-  test('Quality select has high-bitrate fast motion options', async ({ page }) => {
+  test('Resolution select has 720p and 1080p options', async ({ page }) => {
     await page.locator('#accVideo .accordion-head').scrollIntoViewIfNeeded();
     await page.locator('#accVideo .accordion-head').click();
-    const select = page.locator('#qualitySelect');
+    const select = page.locator('#resolutionSelect');
     const options = await select.locator('option').allTextContents();
-    expect(options).toContain('Ultra (20 Mbps / 4K)');
-    expect(options).toContain('High (12 Mbps / Fast Motion)');
-    expect(options).toContain('Full HD Standard (8 Mbps)');
-    expect(options).toContain('Balanced (4 Mbps)');
-    expect(options).toContain('Low / Compact (2 Mbps)');
-    await expect(select).toHaveValue('12000000'); // 12 Mbps default for crisp motion
+    expect(options).toContain('720p');
+    expect(options).toContain('1080p');
+    await expect(select).toHaveValue('720p'); // 720p default for low system load
   });
 
   test('Frame Rate select has 60 FPS and 30 FPS options', async ({ page }) => {
@@ -281,8 +281,8 @@ test.describe('Additional UI Controls', () => {
     await page.locator('#accVideo .accordion-head').click();
     const select = page.locator('#fpsSelect');
     const options = await select.locator('option').allTextContents();
-    expect(options).toContain('60 FPS (Ultra Smooth / Fast Motion)');
-    expect(options).toContain('30 FPS (Standard)');
+    expect(options).toContain('60 FPS');
+    expect(options).toContain('30 FPS');
     await expect(select).toHaveValue('60'); // 60 FPS default
   });
 
@@ -387,7 +387,7 @@ test.describe('Additional UI Controls', () => {
   });
 
   test('Subtitle text is visible', async ({ page }) => {
-    await expect(page.locator('.app-subtitle')).toHaveText('No upload · no limits');
+    await expect(page.locator('.app-subtitle')).toHaveText('Screen · camera · audio — saved locally');
   });
 });
 
@@ -450,18 +450,18 @@ test.describe('Multi-Hour & Fast-Motion Engine Checks', () => {
     expect(result.size).toBe(200);
   });
 
-  test('Screen recording constraints specify 60 FPS and motion contentHint', async ({ page }) => {
+  test('Screen recording constraints specify 60 FPS and resolution-based bitrate', async ({ page }) => {
     const videoConfig = await page.evaluate(() => {
-      const q = document.getElementById('qualitySelect').value;
+      const res = document.getElementById('resolutionSelect').value;
       const fps = document.getElementById('fpsSelect').value;
       return {
-        defaultBitrate: parseInt(q),
+        defaultResolution: res,
         defaultFps: parseInt(fps),
         targetFpsConstant: window.TARGET_FPS
       };
     });
 
-    expect(videoConfig.defaultBitrate).toBe(12000000); // 12 Mbps default for crisp fast motion
+    expect(videoConfig.defaultResolution).toBe('720p'); // 720p default for low system load
     expect(videoConfig.defaultFps).toBe(60); // 60 FPS default
     expect(videoConfig.targetFpsConstant).toBe(60);
   });
@@ -628,6 +628,121 @@ test.describe('Visual Tests', () => {
     await expect(page.locator('#modeCardScreen')).toBeAttached();
     await expect(page.locator('#modeCardCamera')).toBeAttached();
     await expect(page.locator('#modeCardBoth')).toBeAttached();
+  });
+
+  test('Drawing tools exist in DOM', async ({ page }) => {
+    // Drawing toolbar is hidden until recording starts
+    await expect(page.locator('#draw-bar')).toBeHidden();
+
+    // Buttons exist in DOM
+    await expect(page.locator('#laserBtn')).toBeAttached();
+    await expect(page.locator('#penBtn')).toBeAttached();
+    await expect(page.locator('#clearBtn')).toBeAttached();
+    await expect(page.locator('#colorPick')).toBeAttached();
+    await expect(page.locator('#colorInput')).toBeAttached();
+
+    // Button titles are correct
+    await expect(page.locator('#laserBtn')).toHaveAttribute('title', 'Laser pointer');
+    await expect(page.locator('#penBtn')).toHaveAttribute('title', 'Draw');
+    await expect(page.locator('#clearBtn')).toHaveAttribute('title', 'Clear annotations');
+  });
+
+  test('Control button state transitions', async ({ page }) => {
+    // Initial state
+    await expect(page.locator('#startBtn')).toBeEnabled();
+    await expect(page.locator('#pauseBtn')).toBeDisabled();
+    await expect(page.locator('#resumeBtn')).toBeDisabled();
+    await expect(page.locator('#stopBtn')).toBeDisabled();
+    await expect(page.locator('#screenshotBtn')).toBeDisabled();
+
+    // Recording badges hidden initially
+    await expect(page.locator('#recBadge')).not.toHaveClass(/visible/);
+    await expect(page.locator('#sysAudioBadge')).not.toHaveClass(/visible/);
+    await expect(page.locator('#micBadge')).not.toHaveClass(/visible/);
+  });
+
+  test('Countdown overlay is hidden initially and shows on recording start', async ({ page }) => {
+    await expect(page.locator('#countdown')).toBeHidden();
+    await expect(page.locator('#countdownNum')).toHaveText('3');
+  });
+
+  test('Theme toggle switches between light and dark', async ({ page }) => {
+    const root = page.locator('html');
+    const themeBtn = page.locator('#themeBtn');
+    await expect(root).toHaveAttribute('data-theme', 'dark');
+
+    await themeBtn.click();
+    await expect(root).toHaveAttribute('data-theme', 'light');
+
+    await themeBtn.click();
+    await expect(root).toHaveAttribute('data-theme', 'light-panda');
+
+    await themeBtn.click();
+    await expect(root).toHaveAttribute('data-theme', 'dark');
+  });
+
+  test('Source picker modal is hidden initially', async ({ page }) => {
+    await expect(page.locator('#source-picker-modal')).toBeHidden();
+    await expect(page.locator('#sourceList')).toBeAttached();
+  });
+
+  test('Preview modal is hidden initially', async ({ page }) => {
+    await expect(page.locator('#preview-modal')).toBeHidden();
+    await expect(page.locator('#previewVid')).toBeAttached();
+  });
+
+  test('View area is hidden initially', async ({ page }) => {
+    await expect(page.locator('#view')).toBeHidden();
+    await expect(page.locator('#mainVideo')).toBeAttached();
+    await expect(page.locator('#composite')).toBeAttached();
+  });
+
+  test('Color picker elements exist', async ({ page }) => {
+    await expect(page.locator('#colorPick')).toBeAttached();
+    await expect(page.locator('#colorInput')).toBeAttached();
+  });
+
+  test('History panel toggle works', async ({ page }) => {
+    const historyBody = page.locator('#historyBody');
+    await expect(historyBody).not.toHaveClass(/open/);
+
+    await page.locator('#historyHead').click();
+    await expect(historyBody).toHaveClass(/open/);
+
+    await page.locator('#historyHead').click();
+    await expect(historyBody).not.toHaveClass(/open/);
+  });
+
+  test('Hotkey hint strip shows shortcuts', async ({ page }) => {
+    const hints = page.locator('#keyHints');
+    await expect(hints).toContainText('Pause/Resume');
+    await expect(hints).toContainText('Stop');
+    await expect(hints).toContainText('Screenshot');
+  });
+
+  test('Reset hotkeys button restores defaults', async ({ page }) => {
+    await page.locator('#accHotkeys .accordion-head').scrollIntoViewIfNeeded();
+    await page.locator('#accHotkeys .accordion-head').click();
+
+    // Change a hotkey
+    const hkStart = page.locator('#hk-start');
+    await hkStart.click();
+    await page.keyboard.press('KeyK');
+    await expect(hkStart).toHaveText('K');
+
+    // Reset
+    await page.locator('#resetHotkeysBtn').click();
+    await expect(hkStart).toHaveText('F9');
+  });
+
+  test('Filename template supports tokens', async ({ page }) => {
+    await page.locator('#accOutput .accordion-head').scrollIntoViewIfNeeded();
+    await page.locator('#accOutput .accordion-head').click();
+    const input = page.locator('#filenameTemplate');
+    await expect(input).toHaveValue('recording-{date}-{time}');
+
+    await input.fill('my-recording-{mode}');
+    await expect(input).toHaveValue('my-recording-{mode}');
   });
 });
 
