@@ -64,8 +64,8 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 built with
 - **Elephant-and-Goldfish Model (EGM)** & **Loop Engineering**: Formalized architectural contracts and verification workflows.
 
 ### SHA-256 Checksums
-- `Screen Recorder-Setup-1.3.0.exe`: `874FB439F993E46131487AF6B18C339F83E886703D811CFCEF30D3D58506A346`
-- `Screen Recorder-1.3.0.exe`: `E9ABE8DA763B42359B0DF52E727CD880417E052393E72D2239EE139F844A04D3`
+- `Screen Recorder-Setup-1.3.0.exe`: `67CF335AF95BB4D221CE5ECC45CA87CE981CC3E2F38658264641DA95A2568A89`
+- `Screen Recorder-1.3.0.exe`: `12348620AECB62AC250916225AEE8B7D0976CB3B8CE764AB4D892CA13DC8FA15`
 """,
         "draft": False,
         "prerelease": False
