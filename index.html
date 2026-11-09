@@ -585,6 +585,27 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   .app-body{grid-template-columns:1fr}
   .sidebar{border-right:none;border-bottom:1px solid var(--border)}
 }
+
+/* ── Full screen / website responsive ── */
+@media(min-width:1200px){
+  .app-body{grid-template-columns:280px 1fr}
+  .main-panel{padding:24px 32px}
+}
+@media(max-width:1199px){
+  .app-body{grid-template-columns:1fr}
+  .sidebar{border-right:none;border-bottom:1px solid var(--border);padding:16px 14px}
+  .main-panel{padding:16px 20px}
+}
+@media(max-width:640px){
+  .ctrl-row{gap:4px}
+  .btn{padding:7px 14px;font-size:11px}
+  .header-badges{gap:4px}
+  .rec-badge,.sys-audio-badge,.mic-badge{padding:2px 6px;font-size:9px}
+}
+
+/* Full screen mode - hide sidebar when recording for max viewing area */
+body.recording-full .sidebar{display:none}
+body.recording-full .main-panel{grid-column:1 / -1}
 </style>
 </head>
 <body>
@@ -602,7 +623,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <div class="mic-badge" id="micBadge">🎤 Mic</div>
   </div>
   <button class="theme-btn" id="themeBtn" title="Toggle light/dark theme">Theme</button>
-  <button class="theme-btn" id="toggleBtn" title="Toggle recording on/off">⏺</button>
+  <button class="theme-btn" id="toggleBtn" title="Toggle recording on/off">Dark</button>
 </header>
 
 <!-- ── App body ── -->
@@ -928,10 +949,12 @@ $('themeBtn').addEventListener('click', () => {
 
 // ── Toggle button (record on/off without confirmation) ───────────────────────
 let toggleAuto = false;
+$('toggleBtn').textContent = 'Dark';
 $('toggleBtn').title = 'Toggle recording on/off';
 $('toggleBtn').addEventListener('click', () => {
   toggleAuto = !toggleAuto;
   $('toggleBtn').classList.toggle('active', toggleAuto);
+  $('toggleBtn').textContent = toggleAuto ? 'Dark' : 'Dark';
   $('toggleBtn').title = toggleAuto ? 'Auto-record ON' : 'Auto-record OFF';
   if(toggleAuto && !isRecording && !startBtn.disabled){
     start();
@@ -1962,6 +1985,7 @@ async function start(){
     recorder.start(1000); // 1-second chunks for low memory overhead on long recordings
 
     isRecording = true;
+    document.body.classList.add('recording-full');
     startTimer(); startMeter();
     setStatus('Recording… (switch to your tab and work normally)');
     startBtn.disabled  = true;
@@ -2047,6 +2071,7 @@ async function onStop(){
 }
 
 function cleanup(resetUI = true){
+  document.body.classList.remove('recording-full');
   stopDraw(); stopTimer(); stopMeter(); updateSysAudioBadge(false); updateMicBadge(false);
   recAudioTrack = null; isRecording = false;
   if (drawingCtx) {
