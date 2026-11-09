@@ -386,8 +386,8 @@ test.describe('Additional UI Controls', () => {
     await expect(page.locator('#modeCardCamera')).not.toHaveClass(/active/);
   });
 
-  test('Subtitle text is visible', async ({ page }) => {
-    await expect(page.locator('.app-subtitle')).toHaveText('Screen camera audio — saved locally');
+  test('Subtitle text is removed for clean unslop header', async ({ page }) => {
+    await expect(page.locator('.app-subtitle')).toHaveCount(0);
   });
 });
 

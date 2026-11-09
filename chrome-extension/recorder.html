@@ -1,187 +1,1174 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Screen Recorder</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0f1117;--surface:#1a1d27;--surface2:#252836;
-  --accent:#6c63ff;--accent2:#ff6584;--text:#e8eaf6;--sub:#9095a8;
-  --red:#ef4444;--green:#22c55e;--yellow:#f59e0b;
-}
-html,body{width:480px;min-height:680px;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
-body{padding:18px 16px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Screen Recorder</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-h1{font-size:17px;font-weight:700;letter-spacing:.4px;margin-bottom:2px;display:flex;align-items:center;gap:8px}
-h1 .dot{width:10px;height:10px;border-radius:50%;background:var(--red);display:none;animation:pulse 1.2s ease-in-out infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-.sub{color:var(--sub);font-size:12px;margin-bottom:16px}
+    /* ══════════════════════════════════════
+   THEME TOKENS
+══════════════════════════════════════ */
+    :root,
+    [data-theme="dark"] {
+      --bg: #0f1115;
+      --surface: #171a20;
+      --surface2: #1e2128;
+      --surface3: #262a33;
+      --border: rgba(255, 255, 255, .08);
+      --border2: rgba(255, 255, 255, .14);
+      --accent: #d14a3a;
+      --text: #e8eaed;
+      --sub: #8a8f98;
+      --sub2: #5c6169;
+      --red: #d14a3a;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .4);
+      --transition: .15s ease;
+    }
 
-/* mode cards */
-.modes{display:flex;gap:8px;margin-bottom:14px}
-.mode-card{flex:1;padding:10px 8px;border-radius:10px;background:var(--surface);border:2px solid transparent;cursor:pointer;text-align:center;-webkit-user-select:none;user-select:none;transition:border .15s,background .15s}
-.mode-card:hover{background:var(--surface2)}
-.mode-card.active{border-color:var(--accent);background:var(--surface2)}
-.mode-card input{display:none}
-.mode-card .icon{font-size:20px;margin-bottom:4px}
-.mode-card .lbl{font-size:12px;font-weight:600}
+    [data-theme="light"] {
+      --bg: #f4f5f7;
+      --surface: #ffffff;
+      --surface2: #eceeee;
+      --surface3: #e1e3e6;
+      --border: rgba(0, 0, 0, .10);
+      --border2: rgba(0, 0, 0, .16);
+      --accent: #b33a2c;
+      --text: #1c1f24;
+      --sub: #6b7078;
+      --sub2: #9aa0a6;
+      --red: #b33a2c;
+      --green: #15803d;
+      --yellow: #b45309;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .08);
+      --transition: .15s ease;
+    }
 
-/* options */
-.opts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.opt{display:flex;flex-direction:column;gap:3px}
-.opt label{font-size:10px;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-select,input[type=range]{background:var(--surface2);border:1px solid #333;color:var(--text);padding:4px 8px;border-radius:7px;font-size:12px;outline:none;cursor:pointer}
+    [data-theme="light-panda"] {
+      --bg: #fafbfa;
+      --surface: #ffffff;
+      --surface2: #f0f2f0;
+      --surface3: #e4e6e4;
+      --border: rgba(0, 0, 0, .08);
+      --border2: rgba(0, 0, 0, .14);
+      --accent: #2e7d32;
+      --text: #1a1a1a;
+      --sub: #5a6a5a;
+      --sub2: #8a9a8a;
+      --red: #b3261e;
+      --green: #2e7d32;
+      --yellow: #a16207;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .06);
+      --transition: .15s ease;
+    }
 
-/* instruction */
-#instr{background:var(--surface);border-left:3px solid var(--accent);border-radius:7px;padding:10px 12px;margin-bottom:12px;font-size:12px;line-height:1.7;display:none}
-#instr b{color:var(--accent)} #instr .w{color:var(--accent2)}
+    /* ══════════════════════════════════════
+   BASE
+══════════════════════════════════════ */
+    html,
+    body {
+      width: 480px;
+      min-height: 720px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
 
-/* controls */
-.ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.btn{padding:8px 16px;border-radius:9px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.3px}
-.btn:disabled{opacity:.3;cursor:default}
-.btn:not(:disabled):active{transform:scale(.96)}
-.btn-p{background:var(--accent);color:#fff}
-.btn-d{background:var(--red);color:#fff}
-.btn-w{background:var(--yellow);color:#000}
-.btn-g{background:var(--surface2);color:var(--text);border:1px solid #333}
+    body {
+      padding: 14px 16px 18px
+    }
 
-/* status */
-.sbar{display:flex;align-items:center;gap:12px;margin-bottom:10px;min-height:26px}
-#status{font-size:13px;font-weight:600}
-#timer{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);display:none;letter-spacing:1px}
+    ::-webkit-scrollbar {
+      width: 5px
+    }
 
-/* meter */
-#mwrap{display:none;flex-direction:column;gap:2px}
-#mwrap span{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.4px}
-#meter{width:100px;height:7px;background:var(--surface2);border-radius:4px;overflow:hidden}
-#mbar{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));border-radius:4px;transition:width .07s}
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
 
-/* countdown */
-#cd{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:999;font-size:100px;font-weight:900;color:#fff;text-shadow:0 4px 28px rgba(108,99,255,.8)}
+    ::-webkit-scrollbar-thumb {
+      background: var(--surface3);
+      border-radius: 3px
+    }
 
-/* view */
-#view{width:100%;background:#000;display:none;border-radius:10px;overflow:hidden;position:relative;margin-top:4px}
-#mainV{width:100%;display:block}
-#canvas{width:100%;display:none}
+    /* ══════════════════════════════════════
+   HEADER
+══════════════════════════════════════ */
+    .hdr {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
 
-/* draw bar */
-#dbar{position:absolute;top:8px;right:8px;display:none;flex-direction:column;gap:5px;z-index:10}
-.db{width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;font-size:14px;background:rgba(20,20,30,.75);color:#fff;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-.db.on{background:var(--accent)}
-#cpick{width:16px;height:16px;border-radius:50%;border:2px solid #fff;cursor:pointer;margin:0 auto;background:#ff6584}
-#opos,#oshp,#osz,#ci{display:none}
-#csz{width:80px}
-#pm h3{margin-bottom:10px;font-size:15px}
+    .hdr h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
 
-/* keys */
-.keys{font-size:10px;color:var(--sub);margin-top:8px}
-.keys kbd{background:var(--surface2);border:1px solid #444;border-radius:3px;padding:1px 4px;font-family:monospace;font-size:10px}
+    .rec-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red);
+      display: none;
+      animation: pulse 1.2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
 
-/* preview modal */
-#pm{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:1000;padding:12px}
-#pm .box{background:var(--surface);border-radius:14px;padding:16px;width:100%}
-#pm video{width:100%;border-radius:8px;max-height:280px}
-.ma{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
-</style>
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(209, 74, 58, .4)
+      }
+
+      50% {
+        opacity: .6;
+        box-shadow: 0 0 0 5px rgba(209, 74, 58, 0)
+      }
+    }
+
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+      outline: none;
+      padding: 0;
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--text)
+    }
+
+    .theme-toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      transition: transform var(--transition), background var(--transition);
+    }
+
+    [data-theme="dark"] .theme-toggle {
+      background: #1e2128;
+      border-color: rgba(255, 255, 255, .14)
+    }
+
+    [data-theme="dark"] .theme-toggle-thumb {
+      background: #fff;
+      transform: translateX(18px)
+    }
+
+    [data-theme="light"] .theme-toggle {
+      background: #e2e4e8;
+      border-color: rgba(0, 0, 0, .12)
+    }
+
+    [data-theme="light"] .theme-toggle-thumb {
+      background: #fff;
+      transform: translateX(0)
+    }
+
+    [data-theme="light-panda"] .theme-toggle {
+      background: #e0ece0;
+      border-color: rgba(46, 125, 50, .35)
+    }
+
+    [data-theme="light-panda"] .theme-toggle-thumb {
+      background: #2e7d32;
+      transform: translateX(9px)
+    }
+
+    /* ══════════════════════════════════════
+   MODE CARDS
+══════════════════════════════════════ */
+    .modes {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 12px
+    }
+
+    .mode-card {
+      flex: 1;
+      padding: 9px 6px;
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      text-align: center;
+      -webkit-user-select: none;
+      user-select: none;
+      transition: all var(--transition);
+    }
+
+    .mode-card:hover {
+      background: var(--surface3);
+      border-color: var(--border2)
+    }
+
+    .mode-card.active {
+      border-color: var(--accent);
+      background: var(--surface3)
+    }
+
+    .mode-card input {
+      display: none
+    }
+
+    .mode-card .icon {
+      font-size: 18px;
+      margin-bottom: 3px
+    }
+
+    .mode-card .lbl {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: -.1px
+    }
+
+    /* ══════════════════════════════════════
+   INSTRUCTION BLOCK
+══════════════════════════════════════ */
+    #instr {
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      margin-bottom: 11px;
+      font-size: 11.5px;
+      line-height: 1.75;
+      display: none;
+      color: var(--text);
+    }
+
+    #instr b {
+      color: var(--accent)
+    }
+
+    #instr .warn {
+      color: var(--yellow)
+    }
+
+    /* ══════════════════════════════════════
+   SETTINGS PANEL (collapsible)
+══════════════════════════════════════ */
+    .settings-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 11px;
+      overflow: hidden;
+    }
+
+    .settings-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+      transition: background var(--transition);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--sub);
+    }
+
+    .settings-head:hover {
+      background: var(--surface2)
+    }
+
+    .settings-head.open {
+      background: var(--surface2)
+    }
+
+    .settings-head .caret {
+      margin-left: auto;
+      font-size: 9px;
+      transition: transform var(--transition);
+      color: var(--sub2)
+    }
+
+    .settings-head.open .caret {
+      transform: rotate(180deg)
+    }
+
+    .settings-body {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 12px;
+      transition: max-height .2s ease, padding .2s ease;
+      border-top: 0 solid var(--border);
+    }
+
+    .settings-body.open {
+      max-height: 300px;
+      padding: 10px 12px;
+      border-top-width: 1px
+    }
+
+    /* ══════════════════════════════════════
+   FORM FIELDS
+══════════════════════════════════════ */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 9px
+    }
+
+    .field:last-child {
+      margin-bottom: 0
+    }
+
+    .field-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--sub)
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    select,
+    input[type=text] {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border2);
+      color: var(--text);
+      padding: 6px 9px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      outline: none;
+      transition: border-color var(--transition);
+      font-family: inherit;
+    }
+
+    select {
+      -webkit-appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236f7591' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      padding-right: 26px;
+    }
+
+    select:focus,
+    input[type=text]:focus {
+      border-color: var(--accent)
+    }
+
+    /* range */
+    input[type=range] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+      height: 4px;
+    }
+
+    /* toggle switch row */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0
+    }
+
+    .toggle-row span {
+      font-size: 12px;
+      font-weight: 500
+    }
+
+    .tog-sw {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0
+    }
+
+    .tog-sw input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute
+    }
+
+    .tog-sw .slider {
+      position: absolute;
+      inset: 0;
+      background: var(--surface3);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .tog-sw input:checked+.slider {
+      background: var(--accent)
+    }
+
+    .tog-sw .slider::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      transition: transform var(--transition);
+    }
+
+    .tog-sw input:checked+.slider::before {
+      transform: translateX(16px)
+    }
+
+    /* ══════════════════════════════════════
+   CONTROLS
+══════════════════════════════════════ */
+    .ctrl {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 11px
+    }
+
+    .btn {
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: .2px;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .btn:disabled {
+      opacity: .3;
+      cursor: default
+    }
+
+    .btn:not(:disabled):active {
+      transform: scale(.96)
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .btn-stop {
+      background: #c0392b;
+      color: #fff
+    }
+
+    .btn-pause {
+      background: var(--surface3);
+      color: var(--text);
+      border: 1px solid var(--border2)
+    }
+
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border2)
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 11px
+    }
+
+    /* ══════════════════════════════════════
+   STATUS BAR
+══════════════════════════════════════ */
+    .sbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 9px;
+      min-height: 28px;
+      flex-wrap: wrap
+    }
+
+    #status {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text)
+    }
+
+    #timer {
+      font-size: 18px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+      display: none;
+      letter-spacing: 1px;
+    }
+
+    #mwrap {
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      flex-shrink: 0
+    }
+
+    #mwrap span {
+      font-size: 9px;
+      color: var(--sub);
+      text-transform: uppercase;
+      letter-spacing: .4px
+    }
+
+    #meter {
+      width: 80px;
+      height: 6px;
+      background: var(--surface3);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    #mbar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
+      border-radius: 3px;
+      transition: width .07s
+    }
+
+    /* gain row */
+    .gain-row {
+      display: flex;
+      align-items: center;
+      gap: 7px
+    }
+
+    .gain-row input[type=range] {
+      flex: 1
+    }
+
+    .gain-row span {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--sub);
+      min-width: 36px;
+      text-align: right
+    }
+
+    /* ══════════════════════════════════════
+   COUNTDOWN OVERLAY
+══════════════════════════════════════ */
+    #cd {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    #cdNum {
+      font-size: 96px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 4px 24px rgba(209, 74, 58, .7);
+      line-height: 1
+    }
+
+    #cdCancel {
+      padding: 7px 20px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid rgba(255, 255, 255, .4);
+      background: transparent;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background var(--transition);
+    }
+
+    #cdCancel:hover {
+      background: rgba(255, 255, 255, .1)
+    }
+
+    /* ══════════════════════════════════════
+   LIVE VIEW
+══════════════════════════════════════ */
+    #view {
+      width: 100%;
+      background: #000;
+      display: none;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 10px
+    }
+
+    #mainV {
+      width: 100%;
+      display: block
+    }
+
+    #canvas {
+      width: 100%;
+      display: none
+    }
+
+    /* draw bar */
+    #dbar {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 10;
+    }
+
+    .db {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      background: rgba(15, 17, 21, .75);
+      color: #fff;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      transition: background var(--transition);
+    }
+
+    .db.on {
+      background: var(--accent)
+    }
+
+    #cpick {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+      margin: 0 auto;
+      background: #ff6584
+    }
+
+    #ci {
+      display: none
+    }
+
+    /* ══════════════════════════════════════
+   HISTORY PANEL
+══════════════════════════════════════ */
+    .history-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .history-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+      transition: background var(--transition);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--sub);
+    }
+
+    .history-head:hover {
+      background: var(--surface2)
+    }
+
+    .history-count {
+      background: var(--accent);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 1px 6px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .history-caret {
+      margin-left: auto;
+      font-size: 9px;
+      color: var(--sub2);
+      transition: transform var(--transition)
+    }
+
+    .history-head.open .history-caret {
+      transform: rotate(180deg)
+    }
+
+    .history-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .2s ease
+    }
+
+    .history-body.open {
+      max-height: 200px;
+      overflow-y: auto
+    }
+
+    .history-empty {
+      padding: 12px;
+      font-size: 11px;
+      color: var(--sub);
+      text-align: center
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
+      border-top: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+
+    .history-item:hover {
+      background: var(--surface2)
+    }
+
+    .history-thumb {
+      width: 52px;
+      height: 30px;
+      background: var(--surface3);
+      border-radius: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .history-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    .history-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .history-name {
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .history-meta {
+      font-size: 10px;
+      color: var(--sub);
+      margin-top: 1px
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0
+    }
+
+    .history-actions .btn {
+      padding: 3px 8px;
+      font-size: 10px
+    }
+
+    /* ══════════════════════════════════════
+   KEY HINTS
+══════════════════════════════════════ */
+    .keys {
+      font-size: 10px;
+      color: var(--sub);
+      margin-top: 6px;
+      line-height: 1.8
+    }
+
+    .keys kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-family: monospace;
+      font-size: 10px;
+    }
+
+    /* ══════════════════════════════════════
+   PREVIEW MODAL
+══════════════════════════════════════ */
+    #pm {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 14px;
+    }
+
+    #pm .box {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 16px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto
+    }
+
+    #pm h3 {
+      margin-bottom: 10px;
+      font-size: 14px
+    }
+
+    #pm video {
+      width: 100%;
+      border-radius: var(--radius-sm);
+      max-height: 240px;
+      background: #000
+    }
+
+    .pm-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+      flex-wrap: wrap
+    }
+
+    .fmt-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: .4px;
+    }
+
+    .fmt-badge.webm {
+      background: rgba(209, 74, 58, .12);
+      color: var(--red);
+      border: 1px solid rgba(209, 74, 58, .25)
+    }
+
+    .fmt-badge.mp4 {
+      background: rgba(46, 125, 50, .12);
+      color: var(--green);
+      border: 1px solid rgba(46, 125, 50, .25)
+    }
+
+    .pm-size {
+      font-size: 11px;
+      color: var(--sub)
+    }
+
+    .fn-wrap {
+      margin-bottom: 10px
+    }
+
+    .fn-wrap label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--sub);
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .fn-hint {
+      font-size: 9px;
+      color: var(--sub2);
+      margin-top: 3px
+    }
+
+    .fn-hint code {
+      font-family: monospace;
+      background: var(--surface3);
+      padding: 1px 4px;
+      border-radius: 3px
+    }
+
+    .pm-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 10px
+    }
+
+    .pm-actions .btn {
+      flex: 1;
+      text-align: center
+    }
+
+    #mp4note {
+      font-size: 10px;
+      color: var(--sub);
+      margin-top: 6px;
+      display: none
+    }
+  </style>
 </head>
+
 <body>
 
-<h1><div class="dot" id="dot"></div>Screen Recorder</h1>
-<p class="sub">Record screen · camera · voice — saved locally</p>
-
-<div class="modes">
-  <label class="mode-card active">
-    <input type="radio" name="mode" value="screen" checked/>
-    <div class="icon">🖥️</div><div class="lbl">Screen</div>
-  </label>
-  <label class="mode-card">
-    <input type="radio" name="mode" value="camera"/>
-    <div class="icon">📷</div><div class="lbl">Camera</div>
-  </label>
-  <label class="mode-card">
-    <input type="radio" name="mode" value="both"/>
-    <div class="icon">🎬</div><div class="lbl">Screen+Cam</div>
-  </label>
-</div>
-
-<div class="opts">
-  <div class="opt">
-    <label>Quality</label>
-    <select id="q" title="Quality Preset">
-      <option value="8000000">Ultra 8Mbps</option>
-      <option value="4000000" selected>High 4Mbps</option>
-      <option value="2000000">Med 2Mbps</option>
-      <option value="1000000">Low 1Mbps</option>
-    </select>
+  <!-- Header -->
+  <div class="hdr">
+    <h1>
+      <div class="rec-dot" id="dot"></div>
+      Screen Recorder
+    </h1>
+    <button class="theme-toggle" id="themeBtn" role="switch" aria-checked="true" title="Toggle theme">
+      <div class="theme-toggle-thumb"></div>
+    </button>
   </div>
-  <div class="opt" id="opos">
-    <label>Cam pos</label>
-    <select id="pos" title="Camera Position">
-      <option value="br" selected>Bottom-right</option>
-      <option value="bl">Bottom-left</option>
-      <option value="tr">Top-right</option>
-      <option value="tl">Top-left</option>
-    </select>
+
+  <!-- Mode cards -->
+  <div class="modes">
+    <label class="mode-card active" id="modeCardScreen">
+      <input type="radio" name="mode" value="screen" checked />
+      <div class="icon">🖥️</div>
+      <div class="lbl">Screen</div>
+    </label>
+    <label class="mode-card" id="modeCardCamera">
+      <input type="radio" name="mode" value="camera" />
+      <div class="icon">📷</div>
+      <div class="lbl">Camera</div>
+    </label>
+    <label class="mode-card" id="modeCardBoth">
+      <input type="radio" name="mode" value="both" />
+      <div class="icon">🎬</div>
+      <div class="lbl">Both</div>
+    </label>
   </div>
-  <div class="opt" id="oshp">
-    <label>Cam shape</label>
-    <select id="shp" title="Camera Shape">
-      <option value="round" selected>Circle</option>
-      <option value="rect">Rectangle</option>
-    </select>
-  </div>
-  <div class="opt" id="osz">
-    <label>Cam size</label>
-    <input type="range" id="csz" min="10" max="35" value="22"/>
-  </div>
-</div>
 
-<div id="instr"></div>
+  <!-- Instruction block -->
+  <div id="instr"></div>
 
-<div class="ctrl">
-  <button class="btn btn-p" id="startBtn">▶ Start</button>
-  <button class="btn btn-w"  id="pauseBtn"  disabled>⏸ Pause</button>
-  <button class="btn btn-g"  id="resumeBtn" disabled>⏵ Resume</button>
-  <button class="btn btn-d"  id="stopBtn"   disabled>⏹ Stop</button>
-  <button class="btn btn-g"  id="ssBtn"     disabled title="Screenshot">📸</button>
-</div>
-
-<div class="sbar">
-  <div id="status">Ready</div>
-  <div id="timer">00:00</div>
-  <div id="mwrap"><span>Audio</span><div id="meter"><div id="mbar"></div></div></div>
-</div>
-
-<div class="keys"><kbd>Space</kbd> Pause/Resume &nbsp;<kbd>Esc</kbd> Stop &nbsp;<kbd>S</kbd> Screenshot</div>
-
-<div id="cd"></div>
-
-<div id="view">
-  <video id="mainV" autoplay muted></video>
-  <canvas id="canvas"></canvas>
-  <div id="dbar">
-    <button class="db" id="laserBtn" title="Laser">🔴</button>
-    <button class="db" id="penBtn"   title="Draw">✏️</button>
-    <button class="db" id="clearBtn" title="Clear">🗑️</button>
-    <div id="cpick"></div>
-    <input type="color" id="ci" value="#ff6584"/>
-  </div>
-</div>
-
-<div id="pm">
-  <div class="box">
-    <h3>Preview recording</h3>
-    <video id="pvid" controls></video>
-    <div class="ma">
-      <button class="btn btn-g" id="discBtn">🗑 Discard</button>
-      <button class="btn btn-p" id="dlBtn">⬇ Download .webm</button>
+  <!-- Video Settings -->
+  <div class="settings-panel">
+    <div class="settings-head" id="vidHead" onclick="toggleSettings('vid')">
+      🎥 Video <span class="caret">▼</span>
+    </div>
+    <div class="settings-body" id="vidBody">
+      <div class="field">
+        <div class="field-label">Quality</div>
+        <select id="q" title="Quality preset">
+          <option value="8000000">Ultra — 8 Mbps</option>
+          <option value="4000000" selected>High — 4 Mbps</option>
+          <option value="2000000">Medium — 2 Mbps</option>
+          <option value="1000000">Low — 1 Mbps</option>
+        </select>
+      </div>
+      <div class="field" id="opos" style="display:none">
+        <div class="field-label">Camera position</div>
+        <select id="pos" title="Camera overlay position">
+          <option value="br" selected>Bottom right</option>
+          <option value="bl">Bottom left</option>
+          <option value="tr">Top right</option>
+          <option value="tl">Top left</option>
+        </select>
+      </div>
+      <div class="field" id="oshp" style="display:none">
+        <div class="field-label">Camera shape</div>
+        <select id="shp" title="Camera shape">
+          <option value="round" selected>Circle</option>
+          <option value="rect">Rectangle</option>
+        </select>
+      </div>
+      <div class="field" id="osz" style="display:none">
+        <div class="field-label">Camera size — <span id="cszVal">22%</span></div>
+        <input type="range" id="csz" min="10" max="35" value="22" />
+      </div>
     </div>
   </div>
-</div>
 
-<script src="recorder.js"></script>
+  <!-- Audio Settings -->
+  <div class="settings-panel">
+    <div class="settings-head open" id="audHead" onclick="toggleSettings('aud')">
+      🎙️ Audio <span class="caret">▼</span>
+    </div>
+    <div class="settings-body open" id="audBody">
+      <div class="toggle-row" id="sysAudioField">
+        <span>System audio</span>
+        <label class="tog-sw"><input type="checkbox" id="sysAudioToggle" checked />
+          <div class="slider"></div>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>Microphone</span>
+        <label class="tog-sw"><input type="checkbox" id="micToggle" checked />
+          <div class="slider"></div>
+        </label>
+      </div>
+      <div class="field" style="margin-top:8px">
+        <div class="field-label">Gain — <span id="gainVal">100%</span></div>
+        <div class="gain-row">
+          <input type="range" id="gainRange" min="0" max="200" value="100" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Output Settings -->
+  <div class="settings-panel">
+    <div class="settings-head" id="outHead" onclick="toggleSettings('out')">
+      💾 Output <span class="caret">▼</span>
+    </div>
+    <div class="settings-body" id="outBody">
+      <div class="field">
+        <div class="field-label">Filename template</div>
+        <input type="text" id="filenameTemplate" value="recording-{date}-{time}" maxlength="64"
+          placeholder="recording-{date}-{time}" />
+        <div style="font-size:9px;color:var(--sub2);margin-top:3px">Tokens: <code
+            style="font-family:monospace;background:var(--surface3);padding:1px 4px;border-radius:3px">{date}</code>
+          <code style="font-family:monospace;background:var(--surface3);padding:1px 4px;border-radius:3px">{time}</code>
+          <code style="font-family:monospace;background:var(--surface3);padding:1px 4px;border-radius:3px">{mode}</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="ctrl">
+    <button class="btn btn-primary" id="startBtn">▶ Start</button>
+    <button class="btn btn-pause" id="pauseBtn" disabled>⏸ Pause</button>
+    <button class="btn btn-pause" id="resumeBtn" disabled>⏵ Resume</button>
+    <button class="btn btn-stop" id="stopBtn" disabled>⏹ Stop</button>
+    <button class="btn btn-ghost" id="ssBtn" disabled title="Screenshot (S)">📸</button>
+  </div>
+
+  <!-- Status bar -->
+  <div class="sbar">
+    <div id="status">Ready</div>
+    <div id="timer">00:00</div>
+    <div id="mwrap"><span>Audio</span>
+      <div id="meter">
+        <div id="mbar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key hints -->
+  <div class="keys"><kbd>Space</kbd> Pause/Resume &nbsp;<kbd>Esc</kbd> Stop &nbsp;<kbd>S</kbd> Screenshot</div>
+
+  <!-- Countdown overlay -->
+  <div id="cd">
+    <div id="cdNum">3</div>
+    <button id="cdCancel">Cancel (Esc)</button>
+  </div>
+
+  <!-- Live view -->
+  <div id="view">
+    <video id="mainV" autoplay muted playsinline></video>
+    <canvas id="canvas"></canvas>
+    <div id="dbar">
+      <button class="db" id="laserBtn" title="Laser pointer">🔴</button>
+      <button class="db" id="penBtn" title="Draw">✏️</button>
+      <button class="db" id="clearBtn" title="Clear">🗑️</button>
+      <div id="cpick"></div>
+      <input type="color" id="ci" value="#ff6584" />
+    </div>
+  </div>
+
+  <!-- History panel -->
+  <div class="history-panel">
+    <div class="history-head" id="histHead" onclick="toggleHistory()">
+      📋 History <span class="history-count" id="histCount">0</span>
+      <span class="history-caret">▼</span>
+    </div>
+    <div class="history-body" id="histBody">
+      <div class="history-empty" id="histEmpty">No recordings yet this session</div>
+      <div id="histList"></div>
+    </div>
+  </div>
+
+  <!-- Preview modal -->
+  <div id="pm">
+    <div class="box">
+      <h3>Preview recording</h3>
+      <video id="pvid" controls></video>
+      <div class="pm-meta">
+        <span class="fmt-badge webm" id="fmtWebm" style="display:none">WebM</span>
+        <span class="fmt-badge mp4" id="fmtMp4" style="display:none">MP4</span>
+        <span class="pm-size" id="recSize"></span>
+      </div>
+      <div class="fn-wrap">
+        <label>Save as</label>
+        <input type="text" id="saveFilename" placeholder="recording-{date}-{time}" maxlength="128" />
+        <div class="fn-hint">Tokens: <code>{date}</code> <code>{time}</code> <code>{mode}</code></div>
+      </div>
+      <div class="pm-actions">
+        <button class="btn btn-ghost" id="discBtn">🗑 Discard</button>
+        <button class="btn btn-ghost" id="dlWebmBtn">⬇ WebM</button>
+        <button class="btn btn-primary" id="dlMp4Btn">⬇ MP4</button>
+      </div>
+      <div id="mp4note">MP4 not natively supported — WebM plays in Chrome, Edge &amp; VLC</div>
+    </div>
+  </div>
+
+  <script src="recorder.js"></script>
 </body>
+
 </html>

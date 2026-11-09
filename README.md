@@ -172,9 +172,25 @@ npx playwright test
 
 ## Chrome Extension
 
-A Manifest V3 companion extension is included in `chrome-extension/`. It opens a floating recorder window that stays open when you switch tabs, so recording continues uninterrupted.
+A fully-featured Manifest V3 companion extension is included in `chrome-extension/` (v2.0.0). It opens a floating recorder window that stays open when you switch tabs, so recording continues uninterrupted.
 
-To load it:
+### Chrome Extension Features
+
+| Feature | Description |
+|---------|-------------|
+| **3 Recording Modes** | Screen only, Camera only, Screen + Camera with face overlay |
+| **Theme Switcher** | Dark, Light, and Light Panda themes — persisted across sessions |
+| **MP4 & WebM Export** | Download as WebM or MP4 from the preview modal |
+| **Filename Templates** | `{date}`, `{time}`, `{mode}` tokens in output filename |
+| **Multi-hour Timer** | `hh:mm:ss` format for long recordings |
+| **Gain Control** | Real-time microphone/audio gain slider with VU meter |
+| **History Panel** | In-session thumbnail history with preview & re-download |
+| **Annotation Tools** | Laser pointer & pen drawing in Screen + Camera mode |
+| **System Audio** | Capture tab/desktop audio with toggle |
+| **Customizable Filename** | Editable save name in the preview modal |
+
+### How to load it
+
 1. Open Chrome → `chrome://extensions/`
 2. Enable **Developer mode**
 3. Click **Load unpacked** → select the `chrome-extension/` folder

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Screen Recorder",
-  "version": "1.0.0",
-  "description": "Record screen + camera + voice. Face overlay, laser pointer, instant download. No cloud, no signup.",
+  "version": "2.0.0",
+  "description": "Record screen + camera + voice — face overlay, laser pointer, theme switcher, history panel, MP4/WebM export. No cloud, no signup.",
   "permissions": [],
   "action": {
     "default_icon": {
