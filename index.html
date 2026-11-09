@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self';">
 <title>Screen Recorder</title>
 <meta name="description" content="Record your screen, camera, or both — with system audio, mic control, annotations, and more. No upload, no limits."/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -136,46 +137,73 @@ body{
 /* ── Theme toggle ── */
 /* Theme Toggle Switch (based on jade-hernandez/toggle-component) */
 .theme-toggle-wrapper{
-  display:flex;align-items:center;justify-content:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 .theme-toggle{
-  position:relative;display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:24px;border-radius:12px;border:none;cursor:pointer;
-  transition:background-color var(--transition);
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:24px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  transition:background-color var(--transition), transform var(--transition);
   outline:none;
+  padding:0;
+  margin:0;
 }
-.theme-toggle:focus{
+.theme-toggle:focus-visible{
   outline:2px solid var(--accent);
   outline-offset:2px;
 }
+.theme-toggle:active{
+  transform:scale(0.95);
+}
 .theme-toggle-thumb{
-  position:absolute;top:2px;left:2px;width:20px;height:20px;
-  border-radius:50%;transition:transform var(--transition),background-color var(--transition);
+  position:absolute;
+  top:2px;
+  left:2px;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  transition:transform var(--transition), background-color var(--transition);
   box-shadow:0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Dark theme - toggle shows light mode (button dark, thumb white on right) */
+/* Dark theme - toggle shows dark track, white thumb on right */
 [data-theme="dark"] .theme-toggle{
   background:#374151;
 }
 [data-theme="dark"] .theme-toggle-thumb{
-  background:#fff;transform:translate-x(20px);
+  background:#ffffff;
+  transform:translateX(20px);
 }
 
-/* Light theme - toggle shows dark mode (button light, thumb dark on left) */
+/* Light theme - toggle shows light track, dark thumb on left */
 [data-theme="light"] .theme-toggle{
   background:#e5e7eb;
 }
 [data-theme="light"] .theme-toggle-thumb{
-  background:#374151;transform:translate-x(0);
+  background:#374151;
+  transform:translateX(0);
 }
 
-/* Light Panda theme - toggle shows panda mode */
+/* Light Panda theme - toggle shows panda green track, white thumb on right */
 [data-theme="light-panda"] .theme-toggle{
-  background:#f0f2f0;
+  background:#2e7d32;
 }
 [data-theme="light-panda"] .theme-toggle-thumb{
-  background:#2e7d32;transform:translate-x(0);
+  background:#ffffff;
+  transform:translateX(20px);
+}
+
+/* Hide legacy .theme-btn if present */
+.theme-btn{
+  display:none !important;
 }
 
 /* ── App body ── */
@@ -672,77 +700,7 @@ body.recording-full .main-panel{grid-column:1 / -1}
   </div>
 </header>
 
-<style>
-/* Theme Toggle Switch - jade-hernandez/toggle-component style */
-.theme-toggle-wrapper{display:flex;align-items:center;justify-content:center;}
-.theme-toggle{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:44px;
-  height:24px;
-  border-radius:12px;
-  border:none;
-  cursor:pointer;
-  transition:background-color var(--transition);
-  outline:none;
-  padding:0;
-  margin:0;
-}
-.theme-toggle:focus{
-  outline:2px solid var(--accent);
-  outline-offset:2px;
-}
-.theme-toggle:active{
-  transform:scale(0.95);
-}
-.theme-toggle-thumb{
-  position:absolute;
-  top:2px;
-  left:2px;
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  transition:transform var(--transition),background-color var(--transition);
-  box-shadow:0 1px 3px rgba(0,0,0,0.3);
-}
 
-/* Dark theme - toggle shows light mode (dark button, white thumb on right) */
-[data-theme="dark"] .theme-toggle{
-  background:#374151;
-  border-color:#374151;
-}
-[data-theme="dark"] .theme-toggle-thumb{
-  background:#fff;
-  transform:translate-x(20px);
-}
-
-/* Light theme - toggle shows dark mode (light button, dark thumb on left) */
-[data-theme="light"] .theme-toggle{
-  background:#e5e7eb;
-  border-color:#e5e7eb;
-}
-[data-theme="light"] .theme-toggle-thumb{
-  background:#374151;
-  transform:translate-x(0);
-}
-
-/* Light Panda theme - toggle shows panda mode (green button, white thumb on right) */
-[data-theme="light-panda"] .theme-toggle{
-  background:#2e7d32;
-  border-color:#2e7d32;
-}
-[data-theme="light-panda"] .theme-toggle-thumb{
-  background:#fff;
-  transform:translate-x(20px);
-}
-
-/* Remove old button styles for theme-btn */
-.theme-btn{
-  display:none !important;
-}
-</style>
 
 <!-- ── App body ── -->
 <div class="app-body">

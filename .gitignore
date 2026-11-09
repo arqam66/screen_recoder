@@ -6,18 +6,12 @@ Thumbs.db
 .vscode/
 *.swp
 
-# Node / Electron build artifacts
-node_modules/
-out/
-dist/
-release/
-# OS
-.DS_Store
-Thumbs.db
-
-# Editor
-.vscode/
-*.swp
+# Environment & Secrets
+.env
+.env.*
+*.pem
+*.key
+*.pfx
 
 # Node / Electron build artifacts
 node_modules/
@@ -26,11 +20,9 @@ dist/
 release/
 *.log      
 .opencode
-.agents
 .agents/
-.agents/rules/
-.agents/workflows/
-.agents/skills/
 .vscode/private-folder-alias.json
 test-results/
 playwright-report/
+.laya/
+.laya-venv/
