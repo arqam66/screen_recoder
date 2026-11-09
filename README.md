@@ -14,8 +14,8 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 
 | File | Description |
 |---|---|
-| [**Screen-Recorder-Setup-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen-Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller |
-| [**Screen-Recorder-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen-Recorder-1.3.0.exe) | Portable — run directly, no installation needed |
+| [**Screen Recorder-Setup-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller |
+| [**Screen Recorder-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen Recorder-1.3.0.exe) | Portable — run directly, no installation needed |
 
 **Requirements:** Windows 10 or 11 (64-bit)
 
@@ -42,10 +42,10 @@ No download required — launch the app directly in your browser:
 | **Laser Pointer** | Real-time laser pointer rendered into the video |
 | **Screenshot** | Capture PNG snapshots any time during recording |
 | **Hotkeys** | Fully customizable keyboard shortcuts |
-| **Non-stop Recording** | Recording keeps running even if the OS/browser ends a share; Stop requires explicit confirmation so captures can't end by accident |
+| **Non-stop Recording** | Recording keeps running until you click Stop — no confirmation dialog, captures never end by accident |
 | **Local Save** | Save as WebM or MP4 — files never leave your machine |
 | **History Panel** | In-session recording history with thumbnails, preview, and re-download |
-| **Dark / Light Theme** | Persisted theme toggle |
+| **Themes** | Dark, Light, and Light Panda themes — cycle with the Theme button |
 | **Countdown Timer** | 3-second countdown before recording starts (cancellable) |
 | **Filename Templates** | `{date}`, `{time}`, `{mode}` tokens in output filename |
 
@@ -382,8 +382,8 @@ npm run build
 
 | Output | Path |
 |---|---|
-| Installer | `release/Screen-Recorder-Setup-1.3.0.exe` |
-| Portable Exe | `release/Screen-Recorder-1.3.0.exe` |
+| Installer | `release/Screen Recorder-Setup-1.3.0.exe` |
+| Portable Exe | `release/Screen Recorder-1.3.0.exe` |
 
 ---
 

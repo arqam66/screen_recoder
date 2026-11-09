@@ -387,7 +387,7 @@ test.describe('Additional UI Controls', () => {
   });
 
   test('Subtitle text is visible', async ({ page }) => {
-    await expect(page.locator('.app-subtitle')).toHaveText('Screen · camera · audio — saved locally');
+    await expect(page.locator('.app-subtitle')).toHaveText('Screen camera audio — saved locally');
   });
 });
 
