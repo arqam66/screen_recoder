@@ -2,8 +2,10 @@ import os
 import sys
 import json
 import subprocess
+import time
 import urllib.request
 import urllib.error
+import urllib.parse
 
 def get_token():
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
@@ -84,7 +86,7 @@ def create_or_get_release():
         print(f"Release created successfully: ID {data['id']}, HTML URL: {data['html_url']}")
         return data
 
-def upload_asset(release, filepath, content_type="application/octet-stream"):
+def upload_asset(release, filepath, content_type="application/octet-stream", max_retries=3):
     filename = os.path.basename(filepath)
     upload_url_template = release["upload_url"].split("{")[0]
     upload_url = f"{upload_url_template}?name={urllib.parse.quote(filename)}"
@@ -116,11 +118,19 @@ def upload_asset(release, filepath, content_type="application/octet-stream"):
     headers["Content-Type"] = content_type
     headers["Content-Length"] = str(len(file_data))
 
-    req = urllib.request.Request(upload_url, data=file_data, headers=headers, method="POST")
-    with urllib.request.urlopen(req) as resp:
-        res = json.loads(resp.read().decode('utf-8'))
-        print(f"Uploaded {filename}: ID {res['id']}, Download URL: {res['browser_download_url']}")
-        return res
+    for attempt in range(1, max_retries + 1):
+        try:
+            req = urllib.request.Request(upload_url, data=file_data, headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=180) as resp:
+                res = json.loads(resp.read().decode('utf-8'))
+                print(f"Uploaded {filename}: ID {res['id']}, Download URL: {res['browser_download_url']}")
+                return res
+        except Exception as e:
+            print(f"Attempt {attempt}/{max_retries} failed for {filename}: {e}")
+            if attempt == max_retries:
+                raise
+            import time
+            time.sleep(3)
 
 if __name__ == "__main__":
     release = create_or_get_release()
