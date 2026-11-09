@@ -13,8 +13,8 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 
 | File | Description | Size |
 |------|-------------|------|
-| [**Screen Recorder-Setup-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller | ~75 MB |
-| [**Screen Recorder-1.3.0.exe**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen Recorder-1.3.0.exe) | Portable — run directly, no installation needed | ~74 MB |
+| [**Setup (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts | ~75 MB |
+| [**Portable (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-1.3.0.exe) | Run directly — no installation needed | ~74 MB |
 
 **Requirements:** Windows 10 or 11 (64-bit)
 
