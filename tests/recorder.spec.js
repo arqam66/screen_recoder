@@ -465,6 +465,59 @@ test.describe('Multi-Hour & Fast-Motion Engine Checks', () => {
     expect(videoConfig.defaultFps).toBe(60); // 60 FPS default
     expect(videoConfig.targetFpsConstant).toBe(60);
   });
+
+  test('Camera overlay positioning computes correct geometry for all 4 corners', async ({ page }) => {
+    const geometries = await page.evaluate(() => {
+      const composite = document.getElementById('composite');
+      composite.width = 1280;
+      composite.height = 720;
+      const camSize = document.getElementById('camSizeRange');
+      camSize.value = '20'; // 20% of 1280 = 256px
+
+      const posSelect = document.getElementById('camPosSelect');
+      const results = {};
+
+      for (const pos of ['br', 'bl', 'tr', 'tl']) {
+        posSelect.value = pos;
+        results[pos] = window.camRect(1280, 720);
+      }
+      return results;
+    });
+
+    // 20% of 1280 = 256. Camera aspect ratio 720/1280 -> h = 144. Pad is 18.
+    // br: x = 1280 - 256 - 18 = 1006, y = 720 - 144 - 18 = 558
+    expect(geometries.br.w).toBe(256);
+    expect(geometries.br.h).toBe(144);
+    expect(geometries.br.x).toBe(1006);
+    expect(geometries.br.y).toBe(558);
+
+    // bl: x = 18, y = 558
+    expect(geometries.bl.x).toBe(18);
+    expect(geometries.bl.y).toBe(558);
+
+    // tr: x = 1006, y = 18
+    expect(geometries.tr.x).toBe(1006);
+    expect(geometries.tr.y).toBe(18);
+
+    // tl: x = 18, y = 18
+    expect(geometries.tl.x).toBe(18);
+    expect(geometries.tl.y).toBe(18);
+  });
+
+  test('expandFilename replaces date, time, mode tokens and sanitizes unsafe characters', async ({ page }) => {
+    const expanded = await page.evaluate(() => {
+      return {
+        standard: window.expandFilename('rec-{date}-{mode}', 'screen'),
+        custom: window.expandFilename('video_{mode}_{date}_{time}', 'both'),
+        sanitized: window.expandFilename('test/\\:*?"<>|file-{mode}', 'camera')
+      };
+    });
+
+    expect(expanded.standard).toMatch(/^rec-\d{4}-\d{2}-\d{2}-screen$/);
+    expect(expanded.custom).toMatch(/^video_both_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/);
+    expect(expanded.sanitized).not.toMatch(/[\\/:*?"<>|]/);
+    expect(expanded.sanitized).toContain('camera');
+  });
 });
 test.describe('Audio Tests', () => {
   test.beforeEach(async ({ page }) => {

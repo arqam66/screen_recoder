@@ -2255,7 +2255,7 @@ document.addEventListener('keydown', e => {
     e.preventDefault(); start();
   } else if(e.code === hotkeys.pause && !stopBtn.disabled){
     e.preventDefault();
-    recWebm?.state === 'paused' ? resume() : pause();
+    (recorder?.state === 'paused' || recWebm?.state === 'paused') ? resume() : pause();
   } else if(e.code === hotkeys.stop && !stopBtn.disabled){
     e.preventDefault(); stop();
   } else if(e.code === hotkeys.screenshot && !screenshotBtn.disabled){
@@ -2280,6 +2280,8 @@ document.addEventListener('keydown', e => {
 window.fmtTime = fmtTime;
 window.fixWebmDuration = fixWebmDuration;
 window.TARGET_FPS = TARGET_FPS;
+window.camRect = camRect;
+window.expandFilename = expandFilename;
 </script>
 </body>
 </html>

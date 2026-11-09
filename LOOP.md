@@ -36,7 +36,7 @@ This repository implements a formal **Loop Engineering** operational framework f
 ---
 
 ## 2. Verification Scoring Metrics
-- **Test Pass Rate**: 100% required (76/76 passing tests).
+- **Test Pass Rate**: 100% required (78/78 passing tests).
 - **Security Check**: TruffleHog secrets scan = 0 findings; CSP enabled.
 - **Binary Integrity**: Both NSIS Setup and Portable binaries built and hashed.
 

@@ -117,7 +117,7 @@ screen_recorder/
 ├── assets/
 │   └── icon.ico      # App icon
 ├── package.json      # Electron + electron-builder config
-├── tests/            # Playwright e2e tests (76 tests)
+├── tests/            # Playwright e2e tests (78 tests)
 ├── playwright.config.js
 ├── chrome-extension/ # Browser companion extension (Manifest V3)
 │   ├── manifest.json
@@ -164,7 +164,7 @@ screen_recorder/
 # Install Playwright browsers (first time only)
 npx playwright install
 
-# Run all 76 e2e tests
+# Run all 78 e2e tests
 npx playwright test
 ```
 

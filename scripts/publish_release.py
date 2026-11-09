@@ -28,6 +28,28 @@ HEADERS = {
     "User-Agent": "ScreenRecorderReleaseScript"
 }
 
+RELEASE_BODY = """## Screen Recorder v1.3.0 for Windows
+
+A powerful, privacy-first desktop screen recorder for Windows 10 & 11 built with Electron.
+
+### Downloads
+
+| Package | Filename | Size | Description |
+|---|---|---|---|
+| **Installer** | [`Screen.Recorder-Setup-1.3.0.exe`](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-Setup-1.3.0.exe) | ~75 MB | Full installer with Start Menu & Desktop shortcuts |
+| **Portable** | [`Screen.Recorder-1.3.0.exe`](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-1.3.0.exe) | ~75 MB | Standalone executable, no install required |
+
+### What's New in v1.3.0
+- **Theme Toggle Switch**: Smooth animated switch toggling Dark, Light, and Light Panda themes.
+- **Strict Content Security Policy (CSP)**: Enhanced application security and injection protection.
+- **Audio & Video Pipeline**: WASAPI loopback audio, microphone mixing, and multi-hour stream recording.
+- **Elephant-and-Goldfish Model (EGM)** & **Loop Engineering**: Formalized architectural contracts and verification workflows.
+
+### SHA-256 Checksums
+- `Screen Recorder-Setup-1.3.0.exe`: `F7F34129EB79283D0EAB00D5671232CEE766766173507897C63A7273EB395C64`
+- `Screen Recorder-1.3.0.exe`: `7D011197AF652104D3387F9A5AA05D5E05CD335AE3B275B55A52B564FB928EC2`
+"""
+
 def create_or_get_release():
     url = f"https://api.github.com/repos/{REPO}/releases/tags/{TAG}"
     req = urllib.request.Request(url, headers=HEADERS)
@@ -35,6 +57,12 @@ def create_or_get_release():
         with urllib.request.urlopen(req) as resp:
             data = json.loads(resp.read().decode('utf-8'))
             print(f"Existing release found: ID {data['id']}")
+            # Update body with latest hashes
+            update_url = f"https://api.github.com/repos/{REPO}/releases/{data['id']}"
+            update_req = urllib.request.Request(update_url, data=json.dumps({"body": RELEASE_BODY}).encode('utf-8'), headers=HEADERS, method="PATCH")
+            with urllib.request.urlopen(update_req) as u_resp:
+                data = json.loads(u_resp.read().decode('utf-8'))
+                print("Release notes updated with latest SHA-256 checksums.")
             return data
     except urllib.error.HTTPError as e:
         if e.code != 404:
@@ -44,29 +72,9 @@ def create_or_get_release():
     create_url = f"https://api.github.com/repos/{REPO}/releases"
     body = {
         "tag_name": TAG,
-        "target_commitish": "master",
+        "target_commitish": "main",
         "name": "Screen Recorder v1.3.0 for Windows",
-        "body": """## Screen Recorder v1.3.0 for Windows
-
-A powerful, privacy-first desktop screen recorder for Windows 10 & 11 built with Electron.
-
-### Downloads
-
-| Package | Filename | Size | Description |
-|---|---|---|---|
-| **Installer** | `Screen Recorder-Setup-1.3.0.exe` | ~75 MB | Full installer with Start Menu & Desktop shortcuts |
-| **Portable** | `Screen Recorder-1.3.0.exe` | ~74 MB | Standalone executable, no install required |
-
-### What's New in v1.3.0
-- **Theme Toggle Switch**: Smooth animated switch toggling Dark, Light, and Light Panda themes.
-- **Strict Content Security Policy (CSP)**: Enhanced application security and injection protection.
-- **Audio & Video Pipeline**: WASAPI loopback audio, microphone mixing, and multi-hour stream recording.
-- **Elephant-and-Goldfish Model (EGM)** & **Loop Engineering**: Formalized architectural contracts and verification workflows.
-
-### SHA-256 Checksums
-- `Screen Recorder-Setup-1.3.0.exe`: `67CF335AF95BB4D221CE5ECC45CA87CE981CC3E2F38658264641DA95A2568A89`
-- `Screen Recorder-1.3.0.exe`: `12348620AECB62AC250916225AEE8B7D0976CB3B8CE764AB4D892CA13DC8FA15`
-""",
+        "body": RELEASE_BODY,
         "draft": False,
         "prerelease": False
     }
@@ -81,10 +89,18 @@ def upload_asset(release, filepath, content_type="application/octet-stream"):
     upload_url_template = release["upload_url"].split("{")[0]
     upload_url = f"{upload_url_template}?name={urllib.parse.quote(filename)}"
 
-    # Check if asset already exists
-    for asset in release.get("assets", []):
-        if asset["name"] == filename:
-            print(f"Asset '{filename}' already exists (ID: {asset['id']}), deleting prior upload...")
+    # Check if asset already exists (normalizing spaces and dots)
+    def norm(n):
+        return n.replace(" ", ".").lower()
+
+    assets_url = f"https://api.github.com/repos/{REPO}/releases/{release['id']}/assets"
+    assets_req = urllib.request.Request(assets_url, headers=HEADERS)
+    with urllib.request.urlopen(assets_req) as resp:
+        current_assets = json.loads(resp.read().decode('utf-8'))
+
+    for asset in current_assets:
+        if norm(asset["name"]) == norm(filename):
+            print(f"Asset '{asset['name']}' already exists (ID: {asset['id']}), deleting prior upload...")
             del_url = f"https://api.github.com/repos/{REPO}/releases/assets/{asset['id']}"
             del_req = urllib.request.Request(del_url, headers=HEADERS, method="DELETE")
             urllib.request.urlopen(del_req)
