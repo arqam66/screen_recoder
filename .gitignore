@@ -1,0 +1,36 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Node / Electron build artifacts
+node_modules/
+out/
+dist/
+release/
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Node / Electron build artifacts
+node_modules/
+out/
+dist/
+release/
+*.log      
+.opencode
+.agents
+.agents/
+.agents/rules/
+.agents/workflows/
+.agents/skills/
+.vscode/private-folder-alias.json
+test-results/
+playwright-report/

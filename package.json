@@ -1,0 +1,67 @@
+{
+  "name": "screen-recorder",
+  "version": "1.3.0",
+  "description": "Screen recorder with face cam overlay, system audio capture, annotation tools, and instant local download",
+  "main": "main.js",
+  "author": "Arqam",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.screenrecorder",
+    "productName": "Screen Recorder",
+    "artifactName": "${productName}-${version}.exe",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "index.html",
+      "main.js",
+      "preload.js",
+      "assets/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "artifactName": "${productName}-Setup-${version}.exe",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Screen Recorder"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}.exe"
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "has-flag": "^5.0.1"
+  },
+  "allowScripts": {
+    "electron@31.7.7": true
+  }
+}
