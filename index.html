@@ -672,6 +672,78 @@ body.recording-full .main-panel{grid-column:1 / -1}
   </div>
 </header>
 
+<style>
+/* Theme Toggle Switch - jade-hernandez/toggle-component style */
+.theme-toggle-wrapper{display:flex;align-items:center;justify-content:center;}
+.theme-toggle{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:24px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  transition:background-color var(--transition);
+  outline:none;
+  padding:0;
+  margin:0;
+}
+.theme-toggle:focus{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+.theme-toggle:active{
+  transform:scale(0.95);
+}
+.theme-toggle-thumb{
+  position:absolute;
+  top:2px;
+  left:2px;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  transition:transform var(--transition),background-color var(--transition);
+  box-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Dark theme - toggle shows light mode (dark button, white thumb on right) */
+[data-theme="dark"] .theme-toggle{
+  background:#374151;
+  border-color:#374151;
+}
+[data-theme="dark"] .theme-toggle-thumb{
+  background:#fff;
+  transform:translate-x(20px);
+}
+
+/* Light theme - toggle shows dark mode (light button, dark thumb on left) */
+[data-theme="light"] .theme-toggle{
+  background:#e5e7eb;
+  border-color:#e5e7eb;
+}
+[data-theme="light"] .theme-toggle-thumb{
+  background:#374151;
+  transform:translate-x(0);
+}
+
+/* Light Panda theme - toggle shows panda mode (green button, white thumb on right) */
+[data-theme="light-panda"] .theme-toggle{
+  background:#2e7d32;
+  border-color:#2e7d32;
+}
+[data-theme="light-panda"] .theme-toggle-thumb{
+  background:#fff;
+  transform:translate-x(20px);
+}
+
+/* Remove old button styles for theme-btn */
+.theme-btn{
+  display:none !important;
+}
+</style>
+
 <!-- ── App body ── -->
 <div class="app-body">
 
@@ -982,11 +1054,15 @@ let theme = localStorage.getItem('sr-theme') || 'dark';
 if(!THEMES.includes(theme)) theme = 'dark';
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme', t);
-  theme = t; localStorage.setItem('sr-theme', t);
-  // Button text shows the NEXT theme, button color inverts based on current theme
+  theme = t;
+  localStorage.setItem('sr-theme', t);
+  // Update toggle switch state
   const idx = THEMES.indexOf(t);
-  const next = THEMES[(idx + 1) % THEMES.length];
-  $('themeBtn').textContent = THEME_LABEL[next] || next;
+  const isDarkOrPanda = t === 'dark' || t === 'light-panda';
+  const btn = $('themeBtn');
+  const thumb = btn.querySelector('.theme-toggle-thumb');
+  btn.setAttribute('aria-checked', isDarkOrPanda ? 'true' : 'false');
+  thumb.setAttribute('data-checked', isDarkOrPanda ? 'true' : 'false');
 }
 applyTheme(theme);
 $('themeBtn').addEventListener('click', () => {
