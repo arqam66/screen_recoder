@@ -13,7 +13,7 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 
 | File | Description | Size |
 |------|-------------|------|
-| [**Setup (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts | ~75 MB |
+| [**Setup (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller | ~75 MB |
 | [**Portable (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-1.3.0.exe) | Run directly — no installation needed | ~74 MB |
 
 **Requirements:** Windows 10 or 11 (64-bit)
@@ -38,7 +38,7 @@ A powerful, privacy-first desktop screen recorder for Windows 10 & 11 — built 
 | **Non-stop Recording** | Recording keeps running until you click Stop — no confirmation dialog |
 | **Local Save** | Save as WebM or MP4 — files never leave your machine |
 | **History Panel** | In-session recording history with thumbnails, preview, and re-download |
-| **Themes** | Dark, Light, and Light Panda themes |
+| **Themes** | Dark, Light, and Light Panda themes — one button toggles between them |
 | **Countdown Timer** | 3-second countdown before recording starts (cancellable) |
 | **Filename Templates** | `{date}`, `{time}`, `{mode}` tokens in output filename |
 
@@ -126,9 +126,9 @@ screen_recorder/
 │   └── recorder.js
 ├── scripts/
 │   └── record-demo.mjs
-└── release/          # Build output (gitignored)
-    ├── Screen Recorder-Setup-1.3.0.exe
-    └── Screen Recorder-1.3.0.exe
+└── release/          # Build output
+    ├── Screen Recorder-Setup-1.3.0.exe   (NSIS Installer ~75 MB)
+    └── Screen Recorder-1.3.0.exe          (Portable EXE ~74 MB)
 ```
 
 ---
