@@ -13,6 +13,10 @@ Thumbs.db
 *.key
 *.pfx
 
+# Python
+__pycache__/
+*.pyc
+
 # Node / Electron build artifacts
 node_modules/
 out/
