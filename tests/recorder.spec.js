@@ -669,16 +669,40 @@ test.describe('Visual Tests', () => {
   test('Theme toggle switches between light and dark', async ({ page }) => {
     const root = page.locator('html');
     const themeBtn = page.locator('#themeBtn');
+    const thumb = themeBtn.locator('.theme-toggle-thumb');
     await expect(root).toHaveAttribute('data-theme', 'dark');
 
+    // Initial state: dark mode - thumb on right, aria-checked=true
+    await expect(themeBtn).toHaveAttribute('aria-checked', 'true');
+    await expect(thumb).toHaveAttribute('data-checked', 'true');
+
+    // Click 1: switch to light mode - thumb on left, aria-checked=false
     await themeBtn.click();
     await expect(root).toHaveAttribute('data-theme', 'light');
+    await expect(themeBtn).toHaveAttribute('aria-checked', 'false');
+    await expect(thumb).toHaveAttribute('data-checked', 'false');
 
+    // Click 2: switch to light-panda mode - thumb on right, aria-checked=true
     await themeBtn.click();
     await expect(root).toHaveAttribute('data-theme', 'light-panda');
+    await expect(themeBtn).toHaveAttribute('aria-checked', 'true');
+    await expect(thumb).toHaveAttribute('data-checked', 'true');
 
+    // Click 3: back to dark mode
     await themeBtn.click();
     await expect(root).toHaveAttribute('data-theme', 'dark');
+    await expect(themeBtn).toHaveAttribute('aria-checked', 'true');
+    await expect(thumb).toHaveAttribute('data-checked', 'true');
+  });
+
+  test('Theme toggle button is visible and clickable', async ({ page }) => {
+    const themeBtn = page.locator('#themeBtn');
+    const thumb = themeBtn.locator('.theme-toggle-thumb');
+    await expect(themeBtn).toBeVisible();
+    await expect(themeBtn).toBeEnabled();
+    await expect(thumb).toBeVisible();
+    await expect(themeBtn).toHaveAttribute('role', 'switch');
+    await expect(themeBtn).toHaveAttribute('title', 'Toggle light/dark theme');
   });
 
   test('Source picker modal is hidden initially', async ({ page }) => {
