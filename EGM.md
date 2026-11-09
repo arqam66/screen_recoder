@@ -75,3 +75,4 @@ This document defines the architectural contracts, system invariants, and compon
 - **Side Effects**:
   - Manages `MediaStream` tracks, `AudioContext` gain nodes, and recording blobs.
   - Persists user preferences (`sr-theme`, hotkey bindings) exclusively to `localStorage`.
+
