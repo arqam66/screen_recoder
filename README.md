@@ -78,8 +78,8 @@ Screen Recorder is a desktop application for Windows that lets you capture your 
 
 | File | Description | Size |
 |------|-------------|------|
-| [**Setup (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller | ~75 MB |
-| [**Portable (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen%20Recorder-1.3.0.exe) | Run directly — no installation needed | ~75 MB |
+| [**Setup (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-Setup-1.3.0.exe) | Install permanently — Start Menu & Desktop shortcuts, uninstaller | ~75 MB |
+| [**Portable (.exe)**](https://github.com/arqam66/screen_recoder/releases/download/v1.3.0/Screen.Recorder-1.3.0.exe) | Run directly — no installation needed | ~75 MB |
 
 **Requirements:** Windows 10 or 11 (64-bit)
 
@@ -365,4 +365,4 @@ MIT © 2026 Arqam
 
 - **Issues:** [GitHub Issues](https://github.com/arqam66/screen_recoder/issues)
 - **Releases:** [GitHub Releases](https://github.com/arqam66/screen_recoder/releases)
-- **Discussions:** [GitHub Discussions](https://github.com/arqam66/screen_recoder/discussions)
+
