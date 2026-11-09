@@ -140,7 +140,20 @@ body{
   font-size:11px;font-weight:600;transition:all var(--transition);color:var(--text);
 }
 .theme-btn:hover{background:var(--surface3);transform:none}
-.theme-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Theme button color inversion based on theme */
+[data-theme="dark"] .theme-btn{
+  background:#fff;color:#000;border-color:#fff;
+}
+[data-theme="dark"] .theme-btn:hover{background:#eee;border-color:#eee;}
+[data-theme="light"] .theme-btn{
+  background:#000;color:#fff;border-color:#000;
+}
+[data-theme="light"] .theme-btn:hover{background:#333;border-color:#333;}
+[data-theme="light-panda"] .theme-btn{
+  background:#2e7d32;color:#fff;border-color:#2e7d32;
+}
+[data-theme="light-panda"] .theme-btn:hover{background:#1b5e20;border-color:#1b5e20;}
 
 /* ── App body ── */
 .app-body{
@@ -622,8 +635,7 @@ body.recording-full .main-panel{grid-column:1 / -1}
     <div class="sys-audio-badge" id="sysAudioBadge">🔊 Sys Audio</div>
     <div class="mic-badge" id="micBadge">🎤 Mic</div>
   </div>
-  <button class="theme-btn" id="themeBtn" title="Toggle light/dark theme">Theme</button>
-  <button class="theme-btn" id="toggleBtn" title="Toggle recording on/off">Dark</button>
+  <button class="theme-btn" id="themeBtn" title="Toggle light/dark theme">Light</button>
 </header>
 
 <!-- ── App body ── -->
@@ -936,29 +948,16 @@ let theme = localStorage.getItem('sr-theme') || 'dark';
 if(!THEMES.includes(theme)) theme = 'dark';
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme', t);
+  theme = t; localStorage.setItem('sr-theme', t);
+  // Button text shows the NEXT theme, button color inverts based on current theme
   const idx = THEMES.indexOf(t);
   const next = THEMES[(idx + 1) % THEMES.length];
   $('themeBtn').textContent = THEME_LABEL[next] || next;
-  theme = t; localStorage.setItem('sr-theme', t);
 }
 applyTheme(theme);
 $('themeBtn').addEventListener('click', () => {
   const idx = THEMES.indexOf(theme);
   applyTheme(THEMES[(idx + 1) % THEMES.length]);
-});
-
-// ── Toggle button (record on/off without confirmation) ───────────────────────
-let toggleAuto = false;
-$('toggleBtn').textContent = 'Dark';
-$('toggleBtn').title = 'Toggle recording on/off';
-$('toggleBtn').addEventListener('click', () => {
-  toggleAuto = !toggleAuto;
-  $('toggleBtn').classList.toggle('active', toggleAuto);
-  $('toggleBtn').textContent = toggleAuto ? 'Dark' : 'Dark';
-  $('toggleBtn').title = toggleAuto ? 'Auto-record ON' : 'Auto-record OFF';
-  if(toggleAuto && !isRecording && !startBtn.disabled){
-    start();
-  }
 });
 
 // ── Accordion helper ─────────────────────────────────────────────────────────
